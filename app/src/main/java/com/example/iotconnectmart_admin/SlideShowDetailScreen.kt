@@ -35,7 +35,7 @@ import androidx.compose.material3.TextField
 /** Giao diện màn hình Chi tiết SlideShow (SlideShowDetailScreen)
  * -------------------------------------------
  * Người code: Văn Nam Cao
- * Ngày viết: 22/12/2024
+ * Ngày viết: 17/12/2024
  * Lần cập nhật cuối cùng: 23/12/2024
  * -------------------------------------------
  * Input:

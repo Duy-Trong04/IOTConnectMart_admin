@@ -32,7 +32,7 @@ import java.text.DecimalFormat
 /** Giao diện màn hình Chi tiết Khách Hàng (CustomerDetailScreen)
  * -------------------------------------------
  * Người code: Văn Nam Cao
- * Ngày viết: 19/12/2024
+ * Ngày viết: 20/12/2024
  * Lần cập nhật cuối cùng: 23/12/2024
  * -------------------------------------------
  * Input:

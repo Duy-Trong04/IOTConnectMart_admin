@@ -31,7 +31,7 @@ import androidx.compose.ui.focus.FocusRequester
 /** Giao diện màn hình Chi tiết Danh mục (CategoryDetailScreen)
  * -------------------------------------------
  * Người code: Văn Nam Cao
- * Ngày viết: 17/12/2024
+ * Ngày viết: 18/12/2024
  * Lần cập nhật cuối cùng: 23/12/2024
  * -------------------------------------------
  * Input:

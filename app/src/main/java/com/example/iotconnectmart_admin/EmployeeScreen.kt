@@ -38,7 +38,7 @@ import coil.compose.rememberImagePainter
 /** Giao diện màn hình Danh sách Nhân Viên (EmployeeScreen)
  * -------------------------------------------
  * Người code: Văn Nam Cao
- * Ngày viết: 18/12/2024
+ * Ngày viết: 21/12/2024
  * Lần cập nhật cuối cùng: 23/12/2024
  * -------------------------------------------
  * Input:

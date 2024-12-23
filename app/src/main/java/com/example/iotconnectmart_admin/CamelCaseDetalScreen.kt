@@ -31,7 +31,7 @@ import java.text.DecimalFormat
 /** Giao diện màn hình Chi tiết Sản Phẩm (CamelCaseDetailScreen)
  * -------------------------------------------
  * Người code: Văn Nam Cao
- * Ngày viết: 17/12/2024
+ * Ngày viết: 19/12/2024
  * Lần cập nhật cuối cùng: 23/12/2024
  * -------------------------------------------
  * Input:
