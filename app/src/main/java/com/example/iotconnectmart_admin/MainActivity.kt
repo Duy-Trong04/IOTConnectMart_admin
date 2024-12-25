@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             IOTConnectMart_adminTheme {
                 HomeScreen()
+                NavGraph()
             }
         }
     }
