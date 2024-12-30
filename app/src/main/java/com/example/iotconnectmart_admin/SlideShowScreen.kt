@@ -28,10 +28,12 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.times
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
@@ -63,12 +65,16 @@ fun SlideShowScreen(navController: NavController) {
     val isTablet = isTablet(context)
     // Đặt giá trị padding
     val paddingValue = if (isTablet) 270.dp else 50.dp
+    val withValue= if (isTablet) 300.dp else 200.dp
+    val weightValue=if (isTablet) 200.dp else 0.dp
 
     // Tạo trạng thái cho TextField
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
     // Tạo trạng thái cho Dropdown
     var isDropdownExpanded by remember { mutableStateOf(false) }
     var selectedStatus by remember { mutableStateOf("Hoat động") }
+
+    val statusOptions = listOf("Tất cả", "Đang hoạt động", "Không hoạt động")
 
     val dsSlideShow = remember {
         mutableStateOf(
@@ -134,130 +140,127 @@ fun SlideShowScreen(navController: NavController) {
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically // Căn chỉnh theo chiều dọc
-                    ) {
-                        IconButton(
-                            onClick = {
-                                // Quay về màn hình Trang chủ
-                            },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Quay về",
-                                tint = Color.White
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.weight(1f)) // Để tiêu đề chiếm phần còn lại
-
-                        Text(
-                            text = "Danh Sách SlideShow",
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.fillMaxWidth().padding(start = paddingValue),
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = Color(0xFF5D9EFF),
-                    titleContentColor = Color.White
-                ),
-            )
-        },
+//        topBar = {
+//            TopAppBar(
+//                title = {
+//                    Row(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        verticalAlignment = Alignment.CenterVertically // Căn chỉnh theo chiều dọc
+//                    ) {
+//                        IconButton(
+//                            onClick = {
+//                                // Quay về màn hình Trang chủ
+//                            },
+//                        ) {
+//                            Icon(
+//                                imageVector = Icons.Default.ArrowBack,
+//                                contentDescription = "Quay về",
+//                                tint = Color.White
+//                            )
+//                        }
+//
+//                        Spacer(modifier = Modifier.weight(1f)) // Để tiêu đề chiếm phần còn lại
+//
+//                        Text(
+//                            text = "Danh Sách SlideShow",
+//                            fontWeight = FontWeight.Bold,
+//                            modifier = Modifier.fillMaxWidth().padding(start = paddingValue),
+//                        )
+//                    }
+//                },
+//                colors = TopAppBarDefaults.smallTopAppBarColors(
+//                    containerColor = Color(0xFF5D9EFF),
+//                    titleContentColor = Color.White
+//                ),
+//            )
+//        },
         content = { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp)
+                    .padding()
+                    .padding(10.dp)
             ) {
                 // Tìm kiếm
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .border(1.dp, Color.Gray, RoundedCornerShape(20.dp)) // Bo góc cho border
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Trường nhập liệu tìm kiếm
-                    Box(
-                        modifier = Modifier.weight(1f)
-                            .clip(RoundedCornerShape(12.dp))
-                            .padding(8.dp)
-                    ) {
-                        BasicTextField(
-                            value = searchText,
-                            onValueChange = { searchText = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            textStyle = MaterialTheme.typography.bodyMedium,
-                            singleLine = true,
-                            maxLines = 1,
-                            decorationBox = { innerTextField -> innerTextField() },
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Search
-                            )
+                TextField(
+                    value = searchText,
+                    onValueChange = {searchText = it},
+                    singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "search"
                         )
-                    }
-
-                    // Icon tìm kiếm ở cuối
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = "Search Icon",
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .size(24.dp),
-                        tint = Color.Gray
+                    },
+                    placeholder = { Text(text = "Tìm kiếm") },
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(8.dp)
+                        .border(1.dp, color = Color.Gray, RoundedCornerShape(10.dp)),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
                     )
-                }
+                )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Dropdown và Nút "Thêm SlideShow"
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Nút "Thêm SlideShow"
                     Button(
-                        onClick = { /* Handle add slideshow */ },
-                        modifier = Modifier.weight(1f)
+                        onClick = { navController.navigate(Screen.AddSlideShowScreen.route) },
+                        modifier = Modifier.width(withValue).size(64.dp).padding(top=9.dp, start = 6.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF5D9EFF),
+                            contentColor = Color.White
+                        ), shape = RectangleShape
                     ) {
                         Text("THÊM SLIDESHOW")
                     }
 
-                    // Dropdown trạng thái
-                    Box(modifier = Modifier.weight(1f)) {
-                        OutlinedButton(
-                            onClick = { isDropdownExpanded = !isDropdownExpanded },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(text = selectedStatus)
-                        }
+                    Spacer(modifier = Modifier.width(weightValue))
 
-                        // Điều chỉnh để DropdownMenu có thể đè lên LazyColumn
-                        DropdownMenu(
+                    // Dropdown trạng thái
+
+                        ExposedDropdownMenuBox(
                             expanded = isDropdownExpanded,
-                            onDismissRequest = { isDropdownExpanded = false },
+                            onExpandedChange = { isDropdownExpanded = !isDropdownExpanded },
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .zIndex(1f)  // Đảm bảo DropdownMenu được vẽ lên trên các phần tử khác
+                                .weight(1f),
                         ) {
-                            listOf("Hoạt động", "Không hoạt động").forEach { status ->
-                                DropdownMenuItem(
-                                    text = { Text(status) },
-                                    onClick = {
-                                        selectedStatus = status
-                                        isDropdownExpanded = false
-                                    }
-                                )
+                            OutlinedTextField(
+                                value = selectedStatus,
+                                onValueChange = { },
+                                readOnly = true,
+                                label = { Text("Trạng thái") },
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isDropdownExpanded) },
+                                modifier = Modifier
+                                    .menuAnchor()
+                                    .fillMaxWidth()
+                                    .padding(end = 6.dp)
+                            )
+                            ExposedDropdownMenu(
+                                expanded = isDropdownExpanded,
+                                onDismissRequest = { isDropdownExpanded = false }
+                            ) {
+                                statusOptions.forEach { status ->
+                                    DropdownMenuItem(
+                                        text = { Text(status) },
+                                        onClick = {
+                                            selectedStatus = status
+                                            isDropdownExpanded = false
+                                        }
+                                    )
+                                }
                             }
                         }
-                    }
+
                 }
 
                 // Danh sách SlideShow

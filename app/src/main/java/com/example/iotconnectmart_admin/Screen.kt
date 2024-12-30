@@ -1,6 +1,7 @@
 package com.example.iotconnectmart_admin
 
 sealed class Screen(var route: String) {
+    object HomeScreen:Screen("HomeScreen")
 
     object SlideShowScreen : Screen("SlideShowScreen")
     object SlideShowDetailScreen : Screen("slide_show_detail_screen/{id}") {
@@ -31,4 +32,24 @@ sealed class Screen(var route: String) {
     object OrderDetailScreen : Screen("order_detail_screen/{id}") {
         fun createRoute(id: Int) = "order_detail_screen/$id"
     }
+
+    object ImportProductList : Screen("ImportProductListScreen")
+    object ImportProductDetail : Screen("ImportProductDetailScreen/{productId}") {
+        fun createRoute(importProductID: String) = "ImportProductDetailScreen/$importProductID"
+    }
+    object AttributeListScreen: Screen("AttributeListScreen")
+    object AttributeDetailScreen: Screen("AttributeDetailScreen")
+    object AttributeGroupScreen: Screen("AttributeGroupScreen")
+    object StatisticsScreen: Screen("StatisticsScreen")
+    object DashboardScreen: Screen("DashboardScreen")
+
+    object AddSlideShowScreen: Screen("AddSlideShowScreen")
+    object AddCategoryScreen: Screen("AddCategoryScreen")
+    object AddCamelCaseScreen: Screen("AddCamelCaseScreen")
+    object AddCustomerScreen: Screen("AddCustomerScreen")
+    object AddEmployeeScreen: Screen("AddEmployeeScreen")
+    //object AddOrderScreen: Screen("AddOrderScreen")
+    //object AddImportProductScreen: Screen("AddImportProductScreen")
+
+
 }

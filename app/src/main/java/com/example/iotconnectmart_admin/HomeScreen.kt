@@ -45,23 +45,30 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.iotconnectmart_admin.screen.Dashboard.DashboardScreen
+import com.example.iotconnectmart_admin.screen.ImportProduct.ImportProductListScreen
+import com.example.iotconnectmart_admin.screen.ManageAttributes.attributeList.AttributeListScreen
+import com.example.iotconnectmart_admin.screen.statistical.StatisticsScreen
 import com.example.iotconnectmart_admin.ui.theme.IOTConnectMart_adminTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(){
+fun HomeScreen(navController:NavController){
     val navdrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope() //xử lý suspending fun (mở và đóng drawer)
     val countries = listOf(
         "DashBoard",
         "Thống kê",
-        "Sản phẩm",
         "Khách hàng",
-        "Nhân viên",
+        "Đơn hàng",
         "Danh mục",
         "Thuộc tính",
-        "Đơn hàng",
+        "Sản phẩm",
+        "Nhập hàng",
+        "Nhân viên",
+        "SlideShow",
     )
     var selectedTabIndex by remember { mutableStateOf(0) }// Lưu trạng thái tab được chọn
 
@@ -201,16 +208,34 @@ fun HomeScreen(){
                 }
                 when (selectedTabIndex) {
                     0 -> {
-                        Text("Sản phẩm")
+                        DashboardScreen(navController=navController)
                     }
                     1 -> {
-                        DashBoard()
+                        StatisticsScreen(navController=navController)
                     }
                     2 -> {
-                        Text("Sản phẩm")
+                        CustomerScreen(navController = navController)
                     }
                     3 -> {
-                        Text("Khách hàng")
+                        OrderScreen(navController = navController)
+                    }
+                    4 -> {
+                        CategoryScreen(navController = navController)
+                    }
+                    6 ->{
+                        CamelCaseScreen(navController = navController)
+                    }
+                    7 -> {
+                        ImportProductListScreen(navController = navController, onProductClick = { productId -> navController.navigate("ImportProductDetail/$productId") })
+                    }
+                    8 -> {
+                        EmployeeScreen(navController = navController)
+                    }
+                    9 -> {
+                        SlideShowScreen(navController = navController)
+                    }
+                    5->{
+                        AttributeListScreen(navController = navController)
                     }
                     // Thêm các phần tử cho các tab khác nếu cần thiết
                 }
@@ -232,10 +257,10 @@ fun DashBoard(){
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    IOTConnectMart_adminTheme {
-        HomeScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun HomeScreenPreview() {
+//    IOTConnectMart_adminTheme {
+//        HomeScreen(navController = )
+//    }
+//}

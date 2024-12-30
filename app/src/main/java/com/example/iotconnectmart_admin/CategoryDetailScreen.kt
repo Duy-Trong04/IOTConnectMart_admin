@@ -165,7 +165,7 @@ fun CategoryDetailScreen(idC: Int?, navController: NavController) {
                         IconButton(
                             onClick = {
                                 // Quay về màn hình danh sách Category
-                                navController.navigate(Screen.CategoryScreen.route)
+                                navController.navigate(Screen.HomeScreen.route)
                             },
                         ) {
                             Icon(

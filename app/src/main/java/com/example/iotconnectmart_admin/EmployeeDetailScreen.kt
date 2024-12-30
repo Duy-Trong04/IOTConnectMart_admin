@@ -178,7 +178,7 @@ fun EmployeeDetailScreen(id: Int?, navController: NavController) {
                         IconButton(
                             onClick = {
                                 // Quay về màn hình danh sách Employee
-                                navController.navigate(Screen.EmployeeScreen.route)
+                                navController.navigate(Screen.HomeScreen.route)
                             },
                         ) {
                             Icon(
