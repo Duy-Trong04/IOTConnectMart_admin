@@ -1,6 +1,7 @@
 package com.example.iotconnectmart_admin
 
 sealed class Screen(var route: String) {
+    object HomeScreen:Screen("HomeScreen")
 
     object SlideShowScreen : Screen("SlideShowScreen")
     object SlideShowDetailScreen : Screen("slide_show_detail_screen/{id}") {

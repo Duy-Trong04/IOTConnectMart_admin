@@ -173,7 +173,7 @@ fun SlideShowDetailScreen(id: Int?, navController: NavController) {
                         IconButton(
                             onClick = {
                                 // Quay về màn hình danh sách SlideShow
-                                navController.navigate(Screen.SlideShowScreen.route)
+                                navController.navigate(Screen.HomeScreen.route)
                             },
                         ) {
                             Icon(
