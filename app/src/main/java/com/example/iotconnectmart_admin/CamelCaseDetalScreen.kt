@@ -160,7 +160,7 @@ fun CamelCaseDetailScreen(productId: Int?, navController: NavController) {
                         IconButton(
                             onClick = {
                                 // Quay về màn hình danh sách CamelCase
-                                navController.navigate(Screen.CamelCaseScreen.route)
+                                navController.navigate(Screen.HomeScreen.route)
                             },
                         ) {
                             Icon(

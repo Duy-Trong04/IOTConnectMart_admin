@@ -204,7 +204,7 @@ fun OrderDetailScreen(Id: Int?, navController: NavController) {
                         IconButton(
                             onClick = {
                                 // Quay về màn hình danh sách Order
-                                navController.navigate(Screen.OrderScreen.route)
+                                navController.navigate(Screen.HomeScreen.route)
                             },
                         ) {
                             Icon(
