@@ -32,4 +32,14 @@ sealed class Screen(var route: String) {
     object OrderDetailScreen : Screen("order_detail_screen/{id}") {
         fun createRoute(id: Int) = "order_detail_screen/$id"
     }
+
+    object ImportProductList : Screen("ImportProductListScreen")
+    object ImportProductDetail : Screen("ImportProductDetailScreen/{productId}") {
+        fun createRoute(importProductID: String) = "ImportProductDetailScreen/$importProductID"
+    }
+    object AttributeListScreen: Screen("AttributeListScreen")
+    object AttributeDetailScreen: Screen("AttributeDetailScreen")
+    object AttributeGroupScreen: Screen("AttributeGroupScreen")
+    object StatisticsScreen: Screen("StatisticsScreen")
+    object DashboardScreen: Screen("DashboardScreen")
 }

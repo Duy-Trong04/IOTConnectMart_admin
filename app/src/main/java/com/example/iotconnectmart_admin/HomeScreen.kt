@@ -213,10 +213,10 @@ fun HomeScreen(navController:NavController){
                 }
                 when (selectedTabIndex) {
                     0 -> {
-
+                        DashboardScreen(navController = navController)
                     }
                     1 -> {
-
+                        StatisticsScreen(navController = navController)
                     }
                     2 -> {
                         CustomerScreen(navController = navController)
@@ -227,14 +227,21 @@ fun HomeScreen(navController:NavController){
                     4 -> {
                         CategoryScreen(navController = navController)
                     }
+                    5 ->{
+                        AttributeListScreen(navController = navController)
+                    }
                     6 ->{
                         CamelCaseScreen(navController = navController)
+                    }
+                    7 ->{
+                        ImportProductListScreen(navController = navController) {}
                     }
                     8 -> {
                         EmployeeScreen(navController = navController)
                     }
                     9 -> {
                         SlideShowScreen(navController = navController)
+                        OrderScreen(navController = navController)
                     }
                     // Thêm các phần tử cho các tab khác nếu cần thiết
                 }
