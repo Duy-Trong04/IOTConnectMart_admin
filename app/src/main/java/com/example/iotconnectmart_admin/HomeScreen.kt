@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -155,6 +156,13 @@ fun HomeScreen(navController:NavController){
                             fontWeight = FontWeight.Bold
                         )
                     },
+                    actions = {
+                        IconButton(onClick = {}) {
+                            Icon(imageVector = Icons.Filled.Notifications,
+                                contentDescription = "thong bao"
+                            )
+                        }
+                    },
                     navigationIcon = {
                         IconButton(onClick = {
                             scope.launch {
@@ -173,7 +181,8 @@ fun HomeScreen(navController:NavController){
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = Color(0xFF5D9EFF),
                         navigationIconContentColor = Color.White,
-                        titleContentColor = Color.White
+                        titleContentColor = Color.White,
+                        actionIconContentColor = Color.White
                     )
                 )
             }
@@ -204,10 +213,10 @@ fun HomeScreen(navController:NavController){
                 }
                 when (selectedTabIndex) {
                     0 -> {
-                        Text("Sản phẩm")
+
                     }
                     1 -> {
-                        DashBoard()
+
                     }
                     2 -> {
                         CustomerScreen(navController = navController)
@@ -233,24 +242,3 @@ fun HomeScreen(navController:NavController){
         }
     }
 }
-
-@Composable
-fun DashBoard(){
-    Column (
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Text(text = "DASH BOARD",
-            fontSize = 50.sp
-        )
-    }
-}
-
-//@Preview(showBackground = true)
-//@Composable
-//fun HomeScreenPreview() {
-//    IOTConnectMart_adminTheme {
-//        HomeScreen(navController = )
-//    }
-//}
