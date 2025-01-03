@@ -19,10 +19,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.example.iotconnectmart_admin.Screen
 import com.example.iotconnectmart_admin.data.Attribute
-import com.example.iotconnectmart_admin.navigation.Screen
-
 
 
 
@@ -54,7 +54,7 @@ import com.example.iotconnectmart_admin.navigation.Screen
 @OptIn(ExperimentalMaterial3Api::class)
 //@Preview(showBackground = true)
 @Composable
-fun AttributeListScreen(navController:NavHostController) {
+fun AttributeListScreen(navController:NavController) {
 
     var searchQuery by remember { mutableStateOf("") }
 
@@ -90,20 +90,6 @@ fun AttributeListScreen(navController:NavHostController) {
     var selectedOption by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Quản lý thuộc tính") },
-                navigationIcon = {
-                    IconButton(onClick = { /* Xử lý quay lại */ navController.popBackStack()}) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF5F9EFF), // Màu nền
-                    titleContentColor = Color.White // Màu văn bản tiêu đề
-                )
-            )
-        },
         bottomBar = {
             BottomAppBar(
                 //containerColor = Color(0xFF5F9EFF),
@@ -146,7 +132,7 @@ fun AttributeListScreen(navController:NavHostController) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    //.padding(paddingValues)
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {

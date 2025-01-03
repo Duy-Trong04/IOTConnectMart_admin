@@ -46,6 +46,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.iotconnectmart_admin.screen.Dashboard.DashboardScreen
+import com.example.iotconnectmart_admin.screen.ImportProduct.ImportProductListScreen
+import com.example.iotconnectmart_admin.screen.ManageAttributes.attributeList.AttributeListScreen
+import com.example.iotconnectmart_admin.screen.statistical.StatisticsScreen
 import com.example.iotconnectmart_admin.ui.theme.IOTConnectMart_adminTheme
 import kotlinx.coroutines.launch
 
@@ -204,10 +208,10 @@ fun HomeScreen(navController:NavController){
                 }
                 when (selectedTabIndex) {
                     0 -> {
-                        Text("Sản phẩm")
+                        DashboardScreen(navController = navController)
                     }
                     1 -> {
-                        DashBoard()
+                        StatisticsScreen(navController = navController)
                     }
                     2 -> {
                         CustomerScreen(navController = navController)
@@ -218,8 +222,14 @@ fun HomeScreen(navController:NavController){
                     4 -> {
                         CategoryScreen(navController = navController)
                     }
+                    5 ->{
+                        AttributeListScreen(navController = navController)
+                    }
                     6 ->{
                         CamelCaseScreen(navController = navController)
+                    }
+                    7 ->{
+                        ImportProductListScreen(navController = navController) {}
                     }
                     8 -> {
                         EmployeeScreen(navController = navController)
@@ -233,24 +243,3 @@ fun HomeScreen(navController:NavController){
         }
     }
 }
-
-@Composable
-fun DashBoard(){
-    Column (
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Text(text = "DASH BOARD",
-            fontSize = 50.sp
-        )
-    }
-}
-
-//@Preview(showBackground = true)
-//@Composable
-//fun HomeScreenPreview() {
-//    IOTConnectMart_adminTheme {
-//        HomeScreen(navController = )
-//    }
-//}

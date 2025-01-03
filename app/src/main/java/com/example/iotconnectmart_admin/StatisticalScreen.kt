@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 
 
@@ -41,28 +42,28 @@ import androidx.navigation.NavHostController
 @OptIn(ExperimentalMaterial3Api::class)
 //@Preview(showBackground = true)
 @Composable
-fun StatisticsScreen(navController: NavHostController) {
+fun StatisticsScreen(navController: NavController) {
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Thống kê") },
-                navigationIcon = {
-                    IconButton(onClick = { /*  */navController.popBackStack() }) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF5F9EFF),
-                    titleContentColor = Color.White
-                )
-            )
-        },
+//        topBar = {
+//            TopAppBar(
+//                title = { Text("Thống kê") },
+//                navigationIcon = {
+//                    IconButton(onClick = { /*  */navController.popBackStack() }) {
+//                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = Color.White)
+//                    }
+//                },
+//                colors = TopAppBarDefaults.topAppBarColors(
+//                    containerColor = Color(0xFF5F9EFF),
+//                    titleContentColor = Color.White
+//                )
+//            )
+//        },
 
         content = { paddingValues ->
             LazyColumn (
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    //.padding(paddingValues)
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {

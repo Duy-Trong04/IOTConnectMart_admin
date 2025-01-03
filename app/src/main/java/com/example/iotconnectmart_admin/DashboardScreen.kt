@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 
 /** Man hình Dashboard
@@ -39,27 +40,27 @@ import androidx.navigation.NavHostController
 @OptIn(ExperimentalMaterial3Api::class)
 //@Preview(showBackground = true)
 @Composable
-fun DashboardScreen(navController: NavHostController) {
+fun DashboardScreen(navController: NavController) {
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("DashBoard") },
-                navigationIcon = {
-                    IconButton(onClick = { /* Xử lý quay lại */ navController.popBackStack()}) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF5F9EFF), // Màu nền
-                    titleContentColor = Color.White // Màu văn bản tiêu đề
-                )
-            )
-        },
+//        topBar = {
+//            TopAppBar(
+//                title = { Text("DashBoard") },
+//                navigationIcon = {
+//                    IconButton(onClick = { /* Xử lý quay lại */ navController.popBackStack()}) {
+//                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = Color.White)
+//                    }
+//                },
+//                colors = TopAppBarDefaults.topAppBarColors(
+//                    containerColor = Color(0xFF5F9EFF), // Màu nền
+//                    titleContentColor = Color.White // Màu văn bản tiêu đề
+//                )
+//            )
+//        },
         content = { paddingValues ->
             LazyColumn (
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    //.padding(paddingValues)
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {

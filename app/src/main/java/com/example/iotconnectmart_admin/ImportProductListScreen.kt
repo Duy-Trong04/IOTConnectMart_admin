@@ -19,10 +19,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import com.example.iotconnectmart_admin.Screen
 import com.example.iotconnectmart_admin.data.ImportProduct
-import com.example.iotconnectmart_admin.navigation.Screen
 
 
 
@@ -46,7 +47,7 @@ import com.example.iotconnectmart_admin.navigation.Screen
 @OptIn(ExperimentalMaterial3Api::class)
 //@Preview(showBackground = true)
 @Composable
-fun ImportProductListScreen(navController:NavHostController,onProductClick: (String) -> Unit) {
+fun ImportProductListScreen(navController:NavController,onProductClick: (String) -> Unit) {
     var searchQuery by remember { mutableStateOf("") }
 
     var selectedStatus by remember { mutableStateOf("Tất cả") }
@@ -74,25 +75,25 @@ fun ImportProductListScreen(navController:NavHostController,onProductClick: (Str
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Danh sách nhập hàng") },
-                navigationIcon = {
-                    IconButton(onClick = { /*  */navController.popBackStack() }) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF5F9EFF), // Màu nền
-                    titleContentColor = Color.White // Màu văn bản tiêu đề
-                )
-            )
-        },
+//        topBar = {
+//            TopAppBar(
+//                title = { Text("Danh sách nhập hàng") },
+//                navigationIcon = {
+//                    IconButton(onClick = { /*  */navController.popBackStack() }) {
+//                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = Color.White)
+//                    }
+//                },
+//                colors = TopAppBarDefaults.topAppBarColors(
+//                    containerColor = Color(0xFF5F9EFF), // Màu nền
+//                    titleContentColor = Color.White // Màu văn bản tiêu đề
+//                )
+//            )
+//        },
         content = { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    //.padding(paddingValues)
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -105,8 +106,6 @@ fun ImportProductListScreen(navController:NavHostController,onProductClick: (Str
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
-
-                //Spacer(modifier = Modifier.height(16.dp))
 
                 Row (
                     modifier = Modifier.fillMaxWidth(),
