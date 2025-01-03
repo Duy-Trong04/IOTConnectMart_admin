@@ -47,6 +47,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.iotconnectmart_admin.screen.Dashboard.DashboardScreen
+import com.example.iotconnectmart_admin.screen.ImportProduct.ImportProductListScreen
+import com.example.iotconnectmart_admin.screen.ManageAttributes.attributeList.AttributeListScreen
+import com.example.iotconnectmart_admin.screen.statistical.StatisticsScreen
 import com.example.iotconnectmart_admin.ui.theme.IOTConnectMart_adminTheme
 import kotlinx.coroutines.launch
 
@@ -241,7 +245,6 @@ fun HomeScreen(navController:NavController){
                     }
                     9 -> {
                         SlideShowScreen(navController = navController)
-                        OrderScreen(navController = navController)
                     }
                     // Thêm các phần tử cho các tab khác nếu cần thiết
                 }
