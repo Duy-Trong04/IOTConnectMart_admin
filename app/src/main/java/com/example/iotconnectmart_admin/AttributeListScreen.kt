@@ -3,6 +3,7 @@ package com.example.iotconnectmart_admin.screen.ManageAttributes.attributeList
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -269,7 +270,7 @@ fun AttributeItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.LightGray)
+            .border(1.dp, Color.Gray)
             .padding(8.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally

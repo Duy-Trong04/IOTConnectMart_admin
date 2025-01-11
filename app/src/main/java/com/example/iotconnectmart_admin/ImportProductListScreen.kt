@@ -2,6 +2,7 @@ package com.example.iotconnectmart_admin.screen.ImportProduct
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -157,7 +158,7 @@ fun ImportProductCard(importProduct: ImportProduct,onProductClick: (String) -> U
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.LightGray)
+            .border(1.dp, Color.Gray)
             .padding(16.dp)
             .clickable{onProductClick(importProduct.id)}
     ) {
