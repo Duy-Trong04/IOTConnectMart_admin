@@ -27,16 +27,22 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.times
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.example.iotconnectmart_admin.customer.GenderStatus
+import com.example.iotconnectmart_admin.order.OrderStatus
 import com.example.iotconnectmart_admin.order.OrderViewModel
+import com.example.iotconnectmart_admin.order.statusOptions
 
 /** Giao diện màn hình Danh sách Đơn hàng (OrderScreen)
  * -------------------------------------------
@@ -63,8 +69,7 @@ fun OrderScreen(navController: NavController,viewModel: OrderViewModel) {
     LaunchedEffect(Unit) {
         viewModel.getAllOrder()
     }
-    var listAllOrder : List<Order> = viewModel.listAllOrder
-
+    var listAllOrder: List<Order> = viewModel.listAllOrder
 
     // Lấy context từ Composable
     val context = LocalContext.current
@@ -75,7 +80,7 @@ fun OrderScreen(navController: NavController,viewModel: OrderViewModel) {
 
     // Tạo trạng thái cho TextField
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
-/*
+    /*
     val dsOrder = remember {
         mutableStateOf(
             listOf(
@@ -153,63 +158,122 @@ fun OrderScreen(navController: NavController,viewModel: OrderViewModel) {
 */
     // Lọc danh sách khi có sự thay đổi trong tìm kiếm
     //val filteredCamelCase = listAllOrder
-    Scaffold(
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(10.dp)
-            ) {
-                // Tìm kiếm
-                TextField(
-                    value = searchText,
-                    onValueChange = {searchText = it},
-                    singleLine = true,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "search"
-                        )
-                    },
-                    placeholder = { Text(text = "Tìm kiếm") },
-                    modifier = Modifier.fillMaxWidth()
-                        .border(1.dp, color = Color.Gray, RoundedCornerShape(10.dp)),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    )
-                )
 
-                Spacer(modifier = Modifier.height(8.dp))
-                // Danh sách Đơn hàng
+    var isDropdownExpanded by remember { mutableStateOf(false) }
+    var selectedStatus by remember { mutableStateOf("Tất cả") }
+    var selectedStatusValue by remember { mutableStateOf(statusOptions.CHO_VAN_XAC_NHAN.status) }
+    //val statusOptions = listOf( "Tất cả", "Đang vận chuyển", "Đã nhận", "Đang xử lý", "Đã hủy", "Chờ xác nhận", "Chờ thanh toán", "Đã thanh toán" )
+    val listOptions = statusOptions.values().map { it.displayName }
+    val filteredOrder = if (selectedStatus == "Tất cả"&& searchText.text=="") {
+        listAllOrder
+    } else {
+        listAllOrder.filter {
+            (selectedStatus == "Tất cả" || it.status == selectedStatusValue) &&
+             (it.phone.contains(searchText.text, ignoreCase = true) ||
+             it.nameRecipient.contains(searchText.text, ignoreCase = true))
+        }
+    }
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
+    //Lay kich thuoc man hinh
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
+    var seach= listAllOrder.filter {
+        it.phone.contains(searchText.text, ignoreCase = true) ||
+        it.nameRecipient.contains(searchText.text, ignoreCase = true)
+    }
+
+
+        Scaffold(
+            content = { paddingValues ->
+                Column(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .padding(10.dp)
                 ) {
-//                    items(listAllOrder) { index ->
-//                        OrderItem(index = index,
-//                            onClick = {
-//                                navController.navigate("Order_detail_screen/${index.id}")
-//                            }
-//                        )
-//                    }
-//                    items(filteredCamelCase.size) { index ->
-//                        val index = filteredCamelCase[index]
-//                        OrderItem(index =index,
-//                            onClick = {
-//                                navController.navigate("Order_detail_screen/${index.id}")
-//                            })
-//                    }
-                    items(listAllOrder){
-                        OrderItem(index =it,onClick ={
-                            navController.navigate("Order_detail_screen/${it.id}")
-                            viewModel.getOrderById(it.id)
-                        })
-                    }
+                    // Tìm kiếm
+                    TextField(
+                        value = searchText,
+                        onValueChange = {
+                            searchText = it
+                        },
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "search"
+                            )
+                        },
+                        placeholder = { Text(text = "Tìm kiếm") },
+                        modifier = Modifier.fillMaxWidth()
+                            .border(1.dp, color = Color.Gray, RoundedCornerShape(10.dp)),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        ExposedDropdownMenuBox(
+                            expanded = isDropdownExpanded,
+                            onExpandedChange = { isDropdownExpanded = !isDropdownExpanded },
+                            modifier = Modifier.width((1/3f).times(screenWidth))
+                        ) {
+                            OutlinedTextField(
+                                readOnly = true,
+                                value = selectedStatus,
+                                onValueChange = { },
+                                label = { Text("Trạng thái") },
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isDropdownExpanded) },
+                                modifier = Modifier.menuAnchor()
+                            )
+                            ExposedDropdownMenu(
+                                expanded = isDropdownExpanded,
+                                onDismissRequest = { isDropdownExpanded = false }
+                            ) {
+                                listOptions.forEach { status ->
+                                    DropdownMenuItem(
+                                        text = { Text(status) },
+                                        onClick = {
+                                            var selectedGenderStatus= statusOptions.values().first{ it.displayName == status }
+                                            selectedStatus = status
+                                            selectedStatusValue= selectedGenderStatus.status
+                                            isDropdownExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+//                        Box {
+//                            Button(
+//                                onClick = { /* Chức năng của nút */  navController.navigate(Screen.ImportProductDetail.route)},
+//                                colors = ButtonDefaults.buttonColors(
+//                                    containerColor = Color(0xFF5F9EFF)),
+//                                shape = RectangleShape,
+//                                modifier = Modifier.width((1/3f).times(screenWidth))
+//                            ) { Text("Thêm", color = Color.White) }
+//                        }
 
-                }
+                    }
+                    // Danh sách Đơn hàng
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(filteredOrder.size) { index ->
+                            val index = filteredOrder[index]
+                            OrderItem(index =index,
+                                onClick = {
+                                    viewModel.getOrderById(index.id)
+                                    navController.navigate("Order_detail_screen/${index.id}")
+                                    viewModel.getOrderById(index.id)
+                                })
+                        }
+                    }
 //                LazyColumn(
 //                    modifier = Modifier
 //                        .fillMaxSize()
@@ -219,61 +283,60 @@ fun OrderScreen(navController: NavController,viewModel: OrderViewModel) {
 //                            order = it)
 //                    }
 //                }
+                }
             }
-        }
-    )
-}
-
-
-@Composable
-fun CardDeviceFeatured(order: Order) {
-    Card(
-    ) {
-        Text(text = order.idCustomer)
+        )
     }
-}
 
-
-@Composable
-fun OrderItem(index: Order, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .border(1.dp, Color.Gray)
-            .padding(16.dp)
-            .clickable(onClick = onClick)
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            // Id
-            Text(
-                text = "ID: ${index.id}",
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            // Tên Khách hàng
-            Text(
-                text = "Tên KH: ${index.nameRecipient}",
-                style = MaterialTheme.typography.bodySmall
-            )
-
-            // SDT
-            Text(
-                text = "SDT: ${index.phone}",
-                style = MaterialTheme.typography.bodySmall,
-            )
-            // Địa chỉ
-            Text(
-                text = "Địa chỉ: ${index.address}",
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 1,// Số dòng tối đa hiển thị
-                overflow = TextOverflow.Ellipsis // Hiển thị ... khi dài
-            )
-
+    @Composable
+    fun CardDeviceFeatured(order: Order) {
+        Card(
+        ) {
+            Text(text = order.idCustomer)
         }
+    }
 
-        // Hiển thị trạng thái
+
+    @Composable
+    fun OrderItem(index: Order, onClick: () -> Unit) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+                .border(1.dp, Color.Gray)
+                .padding(16.dp)
+                .clickable(onClick = onClick)
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                // Id
+                Text(
+                    text = "ID: ${index.id}",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                // Tên Khách hàng
+                Text(
+                    text = "Tên KH: ${index.nameRecipient}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+
+                // SDT
+                Text(
+                    text = "SDT: ${index.phone}",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                // Địa chỉ
+                Text(
+                    text = "Địa chỉ: ${index.address}",
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,// Số dòng tối đa hiển thị
+                    overflow = TextOverflow.Ellipsis // Hiển thị ... khi dài
+                )
+
+            }
+
+            // Hiển thị trạng thái
 //        Text(
 //            modifier = Modifier.fillMaxWidth().weight(1f),
 //            text = "${index.state}",
@@ -282,5 +345,5 @@ fun OrderItem(index: Order, onClick: () -> Unit) {
 //            textAlign = TextAlign.End,
 //
 //            )
+        }
     }
-}

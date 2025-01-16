@@ -43,22 +43,18 @@ data class CamelCase(
 
 // Khách hàng
 data class Customer(
-    var id:Int,
-    var CustomerId: String,
-    var User: String,
-    var Password: String,
-    var Name: String,
-    var CCCD: String,
-    var Phone: Int,
-    var Address: String,
-    var DateOfBirth: String,
-    var Set: String,
-    var taxCode: String,
-    var Email: String,
-    var RegistrationDate: String,
-    var state: Boolean,
-    var image: String
+    var id: String,
+    var surname: String,
+    var lastName: String,
+    var phone: String,
+    var email: String,
+    var birthdate: String,
+    var gender: Int,
+    var created_at: String,
+    var updated_at: String,
+    var status: Int
 )
+
 
 // Nhân viên
 data class Employee(

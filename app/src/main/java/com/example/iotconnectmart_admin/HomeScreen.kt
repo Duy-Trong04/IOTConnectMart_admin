@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.iotconnectmart_admin.customer.CustomerViewModel
 import com.example.iotconnectmart_admin.order.OrderViewModel
 import com.example.iotconnectmart_admin.screen.Dashboard.DashboardScreen
 import com.example.iotconnectmart_admin.screen.ImportProduct.ImportProductListScreen
@@ -58,7 +59,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController:NavController,viewModel: OrderViewModel){
+fun HomeScreen(
+    navController:NavController,
+    viewModel: OrderViewModel,
+    viewModelCustomer:CustomerViewModel
+){
     val navdrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope() //xử lý suspending fun (mở và đóng drawer)
     val countries = listOf(
@@ -225,7 +230,7 @@ fun HomeScreen(navController:NavController,viewModel: OrderViewModel){
                         StatisticsScreen(navController = navController)
                     }
                     2 -> {
-                        CustomerScreen(navController = navController)
+                        CustomerScreen(navController = navController,viewModelCustomer)
                     }
                     3 -> {
                         OrderScreen(navController = navController, viewModel)

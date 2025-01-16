@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.example.iotconnectmart_admin.order.OrderStatus
 import com.example.iotconnectmart_admin.order.OrderViewModel
 import java.text.DecimalFormat
 
@@ -56,13 +57,13 @@ import java.text.DecimalFormat
 @Composable
 fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderViewModel) {
 
-    viewModel.getOrderById(Id)
 //    var order :Order by remember { mutableStateOf(
 //        Order(0,"","","","","","","","","","","","","",1))
 //    }
-//    LaunchedEffect(Id) {
-//        viewModel.getOrderById(Id)
-//    }
+    viewModel.getOrderById(Id)
+    LaunchedEffect(Id) {
+        viewModel.getOrderById(Id)
+    }
     var order = viewModel.order
     //val order by viewModel.order.observeAsState()
    // val orderState = remember { mutableStateOf<Order?>(null) }
@@ -103,10 +104,9 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
 //    var totalAmount by remember {
 //        mutableStateOf(dsOrderCamelCase.value.sumOf { it.quantity * it.sellingPrice })
 //    }
-//    val formattedAmount = formatCurrency(totalAmount)
+    //val totalAmount = formatCurrency(order.totalAmount as Double)
     // Lấy số lượng sản phẩm khác nhau
     //var productCount = dsOrderCamelCase.value.size
-
     // Khai báo các biến state mới cho thông tin đơn hàng
     var orderID by remember { mutableStateOf(order.id ) }
     var nameRecipient by remember { mutableStateOf(order.nameRecipient) }
@@ -123,10 +123,21 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
     var selectedPlatformOrder by remember { mutableStateOf(order?.platformOrder?:"") }
     var selectedPaymentMethod by remember { mutableStateOf(order?.paymentMethod?:"") }
 
+    var isStatusDropdownExpanded by remember { mutableStateOf(false) }
+    var selectedStatus by remember { mutableStateOf(OrderStatus.values().first { it.status == order.status}.displayName) }
+    var selectedStatusValue by remember { mutableStateOf(OrderStatus.CHO_VAN_XAC_NHAN.status) }
+    val listStatus = OrderStatus.values().map { it.displayName }
+
     // Giá trị mặc định ban đầu từ order
     var created_at by remember { mutableStateOf(order.created_at) }
     var updated_at by remember { mutableStateOf(order.updated_at) }
     var accept_at by remember { mutableStateOf(order.accept_at) }
+
+    //lay ket qua tu viewmodel
+    val resultUpdate = viewModel.orderUpdateResult
+    var showAlertDialog by remember { mutableStateOf(false) }
+
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -487,18 +498,18 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
 
                     Spacer(modifier = Modifier.height(8.dp))
                     // Trang thái
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Trạng thái: ", fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.width(27.dp))
-                        OutlinedButton(
-                            onClick = { isDropdownExpanded = !isDropdownExpanded },
-                        ) {
-                            Text(text = "checkedState")
-                        }
+//                    Row(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        horizontalArrangement = Arrangement.Start,
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        Text(text = "Trạng thái: ", fontWeight = FontWeight.Bold)
+//                        Spacer(modifier = Modifier.width(27.dp))
+//                        OutlinedButton(
+//                            onClick = { isDropdownExpanded = !isDropdownExpanded },
+//                        ) {
+//                            Text(text = "checkedState")
+//                        }
 
                         // Điều chỉnh để DropdownMenu có thể đè lên LazyColumn
 //                        DropdownMenu(
@@ -524,7 +535,81 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
 //                            OrderItemCamelCase(index = it)
 //                        }
 //                    }
+                    //}
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "Trạng thái đơn hàng: ", fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.width(27.dp))
+                        OutlinedButton(
+                            onClick = { isStatusDropdownExpanded = !isStatusDropdownExpanded }
+                        ) {
+                            Text(text = selectedStatus)
+                        }
+
+                        // Điều chỉnh để DropdownMenu có thể đè lên LazyColumn
+                        DropdownMenu(
+                            expanded = isStatusDropdownExpanded,
+                            onDismissRequest = { isStatusDropdownExpanded = false },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .zIndex(1f) // Đảm bảo DropdownMenu được vẽ lên trên các phần tử khác
+                        ) {
+                           // val paymentMethods = listOf("Thanh toán khi nhận hàng (COD)", "Chuyển khoản ngân hàng", "Thanh toán qua thẻ")
+                            listStatus.forEach { method ->
+                                DropdownMenuItem(
+                                    text = { Text(method) },
+                                    onClick = {
+                                       var selectedOrderStatus= OrderStatus.values().first{ it.displayName == method }
+                                        selectedStatus = selectedOrderStatus.displayName// Cập nhật phương thức thanh toán được chọn
+                                        //viewModel.order.value?.paymentMethod = method // Cập nhật giá trị trong order
+                                       selectedStatusValue= selectedOrderStatus.status
+                                        isStatusDropdownExpanded = false
+                                    }
+                                )
+                            }
+                        }
                     }
+                    /*
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Trạng thái đơn hàng: ",
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.width(27.dp))
+                        OutlinedButton(
+                            onClick = { isStatusDropdownExpanded = !isStatusDropdownExpanded }
+                        ) {
+                            Text(text = selectedStatus ?: "Chưa chọn")
+                        }
+                        DropdownMenu(
+                            expanded = isStatusDropdownExpanded,
+                            onDismissRequest = { isStatusDropdownExpanded = false },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .zIndex(1f)
+                        ) {
+                            listStatus.forEach { status ->
+                                DropdownMenu(
+                                    expanded = isPaymentDropdownExpanded,
+                                    onDismissRequest = { isPaymentDropdownExpanded = false },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .zIndex(1f) // Đảm bảo DropdownMenu được vẽ lên trên các phần tử khác
+                                ) {
+                                    Text(text = status)
+                                }
+                            }
+                        }
+                    }
+*/
                     Spacer(modifier = Modifier.height(8.dp))
                     // Tổng sản phẩm
                     Text(text = "Tổng sản phẩm: ", fontWeight = FontWeight.Bold)
@@ -537,11 +622,31 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                     Spacer(modifier = Modifier.height(8.dp))
                     //Tổng giá
                     Text(text = "Tổng tiền: ", fontWeight = FontWeight.Bold)
-                    Text(text = "formattedAmount", fontWeight = FontWeight.Bold,color = Color.Red)
+                    Text(text = order.totalAmount, fontWeight = FontWeight.Bold,color = Color.Red)
                     Spacer(modifier = Modifier.height(30.dp))
                     // Nút Lưu
                     Button(
-                        onClick = { /* Handle update slideshow */ },
+                        onClick = {/* Handle update slideshow*/
+                            var updateOrder = Order(
+                                orderID,
+                                order.idCustomer,
+                                order.totalAmount,
+                                selectedPaymentMethod,
+                                customerAddress,
+                                order.accountNumber,
+                                customerPhone,
+                                nameRecipient,
+                                orderNotes ,
+                                selectedPlatformOrder,
+                                created_at,
+                                updated_at,
+                                accept_at,
+                                order.idEmployee,
+                                selectedStatusValue,)
+                            viewModel.updateOrder(updateOrder)
+                            viewModel.getAllOrder()
+                            showAlertDialog = true
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF5D9EFF),
@@ -549,6 +654,20 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         )
                     ) {
                         Text("Lưu")
+                    }
+                    if (showAlertDialog) {
+                        AlertDialog(
+                            onDismissRequest = {
+                                navController.navigate(Screen.HomeScreen.route)
+                            },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        navController.navigate(Screen.HomeScreen.route)
+                                    }) { Text("OK") } },
+                            title = { Text("Thông báo") },
+                            text = { Text(resultUpdate+selectedStatusValue.toString()) }
+                        )
                     }
 
             }

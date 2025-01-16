@@ -1,5 +1,6 @@
 package com.example.iotconnectmart_admin
 
+import android.icu.text.SimpleDateFormat
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -27,7 +28,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.example.iotconnectmart_admin.customer.CustomerViewModel
+import com.example.iotconnectmart_admin.customer.GenderStatus
+import com.example.iotconnectmart_admin.order.OrderStatus
 import java.text.DecimalFormat
+import java.util.Date
+import java.util.Locale
 
 /** Giao diện màn hình Chi tiết Khách Hàng (CustomerDetailScreen)
  * -------------------------------------------
@@ -49,7 +55,14 @@ import java.text.DecimalFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomerDetailScreen(Id: Int?, navController: NavController) {
+fun CustomerDetailScreen(Id: String, navController: NavController,viewModel: CustomerViewModel) {
+
+    LaunchedEffect(Id) {
+        viewModel.getCustomerById(Id)
+    }
+
+    var customer = viewModel.customer
+
     // Tạo trạng thái cho Dropdown
     var isDropdownExpanded by remember { mutableStateOf(false) }
     // Lấy context từ Composable
@@ -59,12 +72,12 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
     // Đặt giá trị padding
     val paddingValue = if (isTablet) 270.dp else 50.dp
     // Kiểm tra id có hợp lệ hay không
-    if (Id == null) {
-        Text("Không tìm thấy khách hàng")
-        return
-    }
+//    if (Id == null) {
+//        Text("Không tìm thấy khách hàng")
+//        return
+//    }
 
-
+/*
     val dsCustomer = remember {
         mutableStateOf(
             listOf(
@@ -139,33 +152,43 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
             )
         )
     }
-
+*/
 
     // Lấy thông tin Khách hàng từ id (ví dụ: từ danh sách hoặc API)
-    val customer = remember {
-        dsCustomer.value.firstOrNull { it.id == Id }
-    }
+//    val customer = remember {
+//        dsCustomer.value.firstOrNull { it.id == Id }
+//    }
 
-    if (customer == null) {
-        Text("Khách hàng không tồn tại")
-        return
-    }
+//    if (customer == null) {
+//        Text("Khách hàng không tồn tại")
+//        return
+//    }
 
     // Khai báo các biến state mới cho Product
-    var employeeId by remember { mutableStateOf(customer.CustomerId) }
-    var user by remember { mutableStateOf(customer.User) }
-    var password by remember { mutableStateOf(customer.Password) }
-    var name by remember { mutableStateOf(customer.Name) }
-    var cccd by remember { mutableStateOf(customer.CCCD) }
-    var phone by remember { mutableStateOf(customer.Phone) }
-    var address by remember { mutableStateOf(customer.Address) }
-    var dateOfBirth by remember { mutableStateOf(customer.DateOfBirth) }
-    var set by remember { mutableStateOf(customer.Set) }
-    var position by remember { mutableStateOf(customer.taxCode) }
-    var email by remember { mutableStateOf(customer.Email) }
-    var registrationDate by remember { mutableStateOf(customer.RegistrationDate) }
-    // Sử dụng remember để giữ trạng thái checkbox khi thay đổi
-    var checkedState = remember { customer.state }
+    var customerID by remember { mutableStateOf(customer.id) }
+    var lastname by remember { mutableStateOf(customer.lastName) }
+    var surname by remember { mutableStateOf(customer.surname) }
+    //var name by remember { mutableStateOf(customer.Name) }
+    var email by remember { mutableStateOf(customer.email) }
+    var phone by remember { mutableStateOf(customer.phone) }
+    var birthdate by remember { mutableStateOf(customer.birthdate) }
+    //var gender by remember { mutableStateOf(customer.gender) }
+    var created_at by remember { mutableStateOf(customer.created_at) }
+    var updated_at by remember { mutableStateOf(customer.updated_at) }
+    var status by remember { mutableStateOf(customer.status) }
+    //var dateOfBirth by remember { mutableStateOf(customer.DateOfBirth) }
+    //var set by remember { mutableStateOf(customer.Set) }
+//    var position by remember { mutableStateOf(customer.taxCode) }
+//    var registrationDate by remember { mutableStateOf(customer.RegistrationDate) }
+//    // Sử dụng remember để giữ trạng thái checkbox khi thay đổi
+//    var checkedState = remember { customer.state }
+    var resultUpdate = viewModel.customerResult
+    var showAlertDialog by remember { mutableStateOf(false) }
+
+    var isGenderDropdownExpanded by remember { mutableStateOf(false) }
+    var selectedGender by remember { mutableStateOf(GenderStatus.values().first { it.value == customer.gender}.displayGender) }
+    var selectedGenderValue by remember { mutableStateOf(GenderStatus.NAM.value) }
+    val listGender= GenderStatus.values().map { it.displayGender }
 
     Scaffold(
         topBar = {
@@ -212,13 +235,13 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
             ) {
                 item {
                     // Hiển thị ảnh
-                    Image(
-                        painter = rememberImagePainter(customer.image),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxWidth().size(130.dp),
-                        alignment = Alignment.Center
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+//                    Image(
+//                        painter = rememberImagePainter(customer.image),
+//                        contentDescription = null,
+//                        modifier = Modifier.fillMaxWidth().size(130.dp),
+//                        alignment = Alignment.Center
+//                    )
+                    //Spacer(modifier = Modifier.height(8.dp))
                     // ID
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -228,8 +251,8 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
                         Text(text = "ID: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(67.dp))
                         BasicTextField(
-                            value = employeeId,
-                            onValueChange = { newValue -> employeeId = newValue },
+                            value = customerID,
+                            onValueChange = { newValue -> customerID = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             modifier = Modifier.fillMaxWidth()
                                 .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
@@ -238,17 +261,17 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    // User
+                    // lastName
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "User: ", fontWeight = FontWeight.Bold)
+                        Text(text = "Họ: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(48.dp))
                         BasicTextField(
-                            value = user,
-                            onValueChange = { newValue -> user = newValue },
+                            value = lastname,
+                            onValueChange = { newValue -> lastname = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             modifier = Modifier.fillMaxWidth()
                                 .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
@@ -257,25 +280,25 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    // Password
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Password: ", fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.width(10.dp))
-                        BasicTextField(
-                            value = password,
-                            onValueChange = { newValue -> password = newValue },
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
-                            modifier = Modifier.fillMaxWidth()
-                                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                                .padding(16.dp)
-
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    // surname
+//                    Row(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        horizontalArrangement = Arrangement.SpaceBetween,
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        Text(text = "Password: ", fontWeight = FontWeight.Bold)
+//                        Spacer(modifier = Modifier.width(10.dp))
+//                        BasicTextField(
+//                            value = surname,
+//                            onValueChange = { newValue -> surname = newValue },
+//                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
+//                            modifier = Modifier.fillMaxWidth()
+//                                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+//                                .padding(16.dp)
+//
+//                        )
+//                    }
+//                    Spacer(modifier = Modifier.height(8.dp))
                     // Tên Nhân viên
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -285,8 +308,8 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
                         Text(text = "Tên: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(58.dp))
                         BasicTextField(
-                            value = name,
-                            onValueChange = { newValue -> name = newValue },
+                            value = surname,
+                            onValueChange = { newValue -> surname = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             modifier = Modifier.fillMaxWidth()
                                 .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
@@ -295,7 +318,7 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    // CCCD
+                    // email
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -304,8 +327,8 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
                         Text(text = "CCCD: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(44.dp))
                         BasicTextField(
-                            value = cccd,
-                            onValueChange = { newValue -> cccd = newValue},
+                            value = email,
+                            onValueChange = { newValue -> email = newValue},
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             modifier = Modifier.fillMaxWidth()
                                 .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
@@ -323,8 +346,8 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
                         Text(text = "SDT: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(57.dp))
                         BasicTextField(
-                            value = phone.toString(),
-                            onValueChange = { newValue -> phone = newValue.toIntOrNull()?:0 },
+                            value = phone,
+                            onValueChange = { newValue -> phone = newValue.toString() },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             modifier = Modifier.fillMaxWidth()
                                 .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
@@ -345,8 +368,8 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
                         Text(text = "Ngày sinh: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(13.dp))
                         BasicTextField(
-                            value = dateOfBirth,
-                            onValueChange = { newValue -> dateOfBirth = newValue },
+                            value = birthdate,
+                            onValueChange = { newValue -> birthdate = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             modifier = Modifier.fillMaxWidth()
                                 .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
@@ -364,25 +387,27 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
                         Text(text = "Giới tính: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(27.dp))
                         OutlinedButton(
-                            onClick = { isDropdownExpanded = !isDropdownExpanded },
+                            onClick = { isGenderDropdownExpanded = !isGenderDropdownExpanded }
                         ) {
-                            Text(text = set)
+                            Text(text = selectedGender)
                         }
 
                         // Điều chỉnh để DropdownMenu có thể đè lên LazyColumn
                         DropdownMenu(
-                            expanded = isDropdownExpanded,
-                            onDismissRequest = { isDropdownExpanded = false },
+                            expanded = isGenderDropdownExpanded,
+                            onDismissRequest = { isGenderDropdownExpanded = false },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .zIndex(1f)  // Đảm bảo DropdownMenu được vẽ lên trên các phần tử khác
+                                .zIndex(1f) // Đảm bảo DropdownMenu được vẽ lên trên các phần tử khác
                         ) {
-                            listOf("Nam", "Nữ","Khác").forEach { status ->
+                            listGender.forEach { method ->
                                 DropdownMenuItem(
-                                    text = { Text(status) },
+                                    text = { Text(method) },
                                     onClick = {
-                                        set = status
-                                        isDropdownExpanded = false
+                                        var selectedGenderStatus= GenderStatus.values().first{ it.displayGender == method }
+                                        selectedGender = selectedGenderStatus.displayGender// Cập nhật Gioi tinh được chọn
+                                        selectedGenderValue= selectedGenderStatus.value
+                                        isGenderDropdownExpanded = false
                                     }
                                 )
                             }
@@ -390,22 +415,22 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     // Mã số thuế
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Mã số thuế: ", fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.width(5.dp))
-                        BasicTextField(
-                            value = position,
-                            onValueChange = { newValue -> position = newValue },
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
-                            modifier = Modifier.fillMaxWidth()
-                                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                                .padding(16.dp)
-                        )
-                    }
+//                    Row(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        horizontalArrangement = Arrangement.SpaceBetween,
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        Text(text = "Mã số thuế: ", fontWeight = FontWeight.Bold)
+//                        Spacer(modifier = Modifier.width(5.dp))
+//                        BasicTextField(
+//                            value = position,
+//                            onValueChange = { newValue -> position = newValue },
+//                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
+//                            modifier = Modifier.fillMaxWidth()
+//                                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+//                                .padding(16.dp)
+//                        )
+//                    }
 
                     Spacer(modifier = Modifier.height(8.dp))
                     // Email
@@ -437,8 +462,8 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
                         Text(text = "Ngày lập: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(25.dp))
                         BasicTextField(
-                            value = registrationDate,
-                            onValueChange = { newValue -> registrationDate = newValue },
+                            value = created_at,
+                            onValueChange = { newValue -> created_at = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             modifier = Modifier.fillMaxWidth()
                                 .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
@@ -448,54 +473,73 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     //Địa chỉ
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        //verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Địa chỉ: ", fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.width(40.dp))
-                        BasicTextField(
-                            value = address,
-                            onValueChange = { newValue -> address = newValue },
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
-                            modifier = Modifier.fillMaxWidth()
-                                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                                .padding(16.dp)
-                                .size(100.dp)
-
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
+//                    Row(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        horizontalArrangement = Arrangement.SpaceBetween,
+//                        //verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        Text(text = "Địa chỉ: ", fontWeight = FontWeight.Bold)
+//                        Spacer(modifier = Modifier.width(40.dp))
+//                        BasicTextField(
+//                            value = address,
+//                            onValueChange = { newValue -> address = newValue },
+//                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
+//                            modifier = Modifier.fillMaxWidth()
+//                                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+//                                .padding(16.dp)
+//                                .size(100.dp)
+//
+//                        )
+//                    }
+                    //Spacer(modifier = Modifier.height(8.dp))
                     // Trạng thái checkbox
-                    Row(
-                    ) {
-                        Text(
-                            text = "Trạng thái: ",
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.align(Alignment.CenterVertically)
-                        )
-                        if (checkedState) {
-                            Checkbox(
-                                checked = checkedState,
-                                onCheckedChange = { isChecked ->
-                                    checkedState = isChecked
-                                    // Cập nhật trạng thái của customer nếu cần
-                                    customer.state = isChecked
-                                },
-                                colors = CheckboxDefaults.colors(
-                                    checkedColor = Color(0xFF2E7D32), // Màu xanh lá đậm khi checkbox được check
-                                    uncheckedColor = Color.Gray,     // Màu khi checkbox không được check
-                                    checkmarkColor = Color.White     // Màu dấu check
-                                )
-                            )
-                        }
-                    }
+//                    Row(
+//                    ) {
+//                        Text(
+//                            text = "Trạng thái: ",
+//                            fontWeight = FontWeight.Bold,
+//                            style = MaterialTheme.typography.bodySmall,
+//                            modifier = Modifier.align(Alignment.CenterVertically)
+//                        )
+//                        if (checkedState) {
+//                            Checkbox(
+//                                checked = checkedState,
+//                                onCheckedChange = { isChecked ->
+//                                    checkedState = isChecked
+//                                    // Cập nhật trạng thái của customer nếu cần
+//                                    customer.state = isChecked
+//                                },
+//                                colors = CheckboxDefaults.colors(
+//                                    checkedColor = Color(0xFF2E7D32), // Màu xanh lá đậm khi checkbox được check
+//                                    uncheckedColor = Color.Gray,     // Màu khi checkbox không được check
+//                                    checkmarkColor = Color.White     // Màu dấu check
+//                                )
+//                            )
+//                        }
+//                    }
                     Spacer(modifier = Modifier.height(30.dp))
                     // Nút Lưu
                     Button(
-                        onClick = { /* Handle update slideshow */ },
+                        onClick = {
+                        /* Handle update slideshow */
+                            var formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                            val currentDate = Date()
+                            updated_at= formatter.format(currentDate)
+                            var updateCustomer = Customer(
+                                customerID,
+                                surname,
+                                lastname,
+                                phone,
+                                email,
+                                birthdate,
+                                selectedGenderValue,
+                                created_at,
+                                updated_at,
+                                1)
+                            viewModel.updateCustomer(updateCustomer)
+                            resultUpdate= viewModel.customerResult
+                            showAlertDialog = true
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF5D9EFF),
@@ -503,6 +547,20 @@ fun CustomerDetailScreen(Id: Int?, navController: NavController) {
                         )
                     ) {
                         Text("Lưu")
+                    }
+                    if (showAlertDialog) {
+                        AlertDialog(
+                            onDismissRequest = {
+                                navController.navigate(Screen.HomeScreen.route)
+                            },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        navController.navigate(Screen.HomeScreen.route)
+                                    }) { Text("OK") } },
+                            title = { Text("Thông báo") },
+                            text = { Text(resultUpdate+updated_at) }
+                        )
                     }
                 }
             }

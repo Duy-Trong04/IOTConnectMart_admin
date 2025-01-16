@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.iotconnectmart_admin.customer.CustomerViewModel
 import com.example.iotconnectmart_admin.order.OrderViewModel
 import com.example.iotconnectmart_admin.ui.theme.IOTConnectMart_adminTheme
 
@@ -21,6 +22,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         val orderViewModel by viewModels<OrderViewModel>()
+        val customerViewModel by viewModels<CustomerViewModel>()
         lateinit var navController: NavHostController
 
         super.onCreate(savedInstanceState)
@@ -28,7 +30,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             IOTConnectMart_adminTheme {
                 navController = rememberNavController()
-                NavGraph(navController,viewModel = orderViewModel)
+                NavGraph(navController,orderViewModel,customerViewModel)
             }
         }
     }

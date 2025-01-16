@@ -32,8 +32,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.example.iotconnectmart_admin.customer.CustomerViewModel
 
 /** Giao diện màn hình Danh sách Khách Hàng (CustomerScreen)
  * -------------------------------------------
@@ -45,16 +47,23 @@ import coil.compose.rememberImagePainter
  *
  * Output: Chứa các thành phần giao diện của màn hình danh sách Khách hàng
  * ------------------------------------------------------------
- * Người cập nhật:
- * Ngày cập nhật:
+ * Người cập nhật:Nguyen Manh CUong
+ * Ngày cập nhật:17/01/2025
  * ------------------------------------------------------------
- * Nội dung cập nhật:
+ * Nội dung cập nhật: load danh sach khach hang
  *
  */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomerScreen(navController: NavController) {
+fun CustomerScreen(navController: NavController,viewModel: CustomerViewModel) {
+
+    viewModel.getAllCustomers()
+    LaunchedEffect(Unit) {
+        viewModel.getAllCustomers()
+    }
+    var listAllCustomer: List<Customer> = viewModel.listAllCustomer
+
     // Lấy context từ Composable
     val context = LocalContext.current
     // Kiểm tra thiết bị là tablet hay mobile
@@ -65,7 +74,7 @@ fun CustomerScreen(navController: NavController) {
     // Tạo trạng thái cho TextField
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
 
-    val dsCustomer = remember {
+   /* val dsCustomer = remember {
         mutableStateOf(
             listOf(
                 Customer(
@@ -139,15 +148,17 @@ fun CustomerScreen(navController: NavController) {
             )
         )
     }
-
+*/
     // Lọc danh sách khi có sự thay đổi trong tìm kiếm
-    val filteredCamelCase = dsCustomer.value.filter {
-        it.CustomerId.contains(searchText.text, ignoreCase = true) ||
-                it.User.contains(searchText.text, ignoreCase = true) ||
-                it.Name.contains(searchText.text, ignoreCase = true)
-        it.CCCD.contains(searchText.text, ignoreCase = true) ||
-                it.Address.contains(searchText.text, ignoreCase = true)
-        it.taxCode.contains(searchText.text, ignoreCase = true)
+
+
+
+    val filteredCamelCase = listAllCustomer.filter {
+        it.id.contains(searchText.text, ignoreCase = true) ||
+        it.surname.contains(searchText.text, ignoreCase = true) ||
+        it.lastName.contains(searchText.text, ignoreCase = true)
+        it.phone.contains(searchText.text, ignoreCase = true) ||
+        it.email.contains(searchText.text, ignoreCase = true)
     }
 
     Scaffold(
@@ -189,7 +200,9 @@ fun CustomerScreen(navController: NavController) {
                 ) {
                     // Nút "Thêm Khách Hàng"
                     Button(
-                        onClick = { /* Handle add  */ },
+                        onClick = { /* Handle add  */
+                            //navController.navigate("customer_detail_screen/${index.id}")
+                        },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF5D9EFF),
@@ -209,6 +222,7 @@ fun CustomerScreen(navController: NavController) {
                         CustomerItem(index =index,
                             onClick = {
                                 navController.navigate("customer_detail_screen/${index.id}")
+                                viewModel.getCustomerById(index.id)
                             })
                     }
                 }
@@ -219,7 +233,7 @@ fun CustomerScreen(navController: NavController) {
 @Composable
 fun CustomerItem(index: Customer,onClick: () -> Unit) {
     // Sử dụng remember để giữ trạng thái checkbox khi thay đổi
-    var checkedState = remember { index.state }
+    //var checkedState = remember { index.state }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -229,43 +243,43 @@ fun CustomerItem(index: Customer,onClick: () -> Unit) {
             .clickable(onClick = onClick)
     ) {
         // Hiển thị hình ảnh
-        Image(
-            painter = rememberImagePainter(index.image),
-            contentDescription = null,
-            modifier = Modifier.size(60.dp)
-        )
+//        Image(
+//            painter = rememberImagePainter(index.image),
+//            contentDescription = null,
+//            modifier = Modifier.size(60.dp)
+//        )
 
-        Spacer(modifier = Modifier.width(8.dp))
+        //Spacer(modifier = Modifier.width(8.dp))
         Column(modifier = Modifier.weight(1f)) {
-            // ID Nhân viên
+            // ID Khach Hang
             Text(
-                text = "ID: ${index.CustomerId}",
+                text = "ID: ${index.id}",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.bodyMedium
             )
 
             // Tên Nhân viên
             Text(
-                text = "Tên: ${index.Name}",
+                text = "Tên: ${index.lastName} "+"${index.surname}",
                 style = MaterialTheme.typography.bodySmall
             )
 
             // SDT
             Text(
-                text = "SDT: ${index.Phone}",
+                text = "SDT: ${index.phone}",
                 style = MaterialTheme.typography.bodySmall,
             )
 
-            // Địa chỉ
+            // email
             Text(
-                text = "Địa chỉ: ${index.Address}",
+                text = "Địa chỉ: ${index.email}",
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 1,// Số dòng tối đa hiển thị
                 overflow = TextOverflow.Ellipsis // Hiển thị ... khi dài
             )
 
             // Trạng thái checkbox
-            Row(
+           /* Row(
             ) {
                 Text(
                     text = "Trạng thái: ",
@@ -283,7 +297,7 @@ fun CustomerItem(index: Customer,onClick: () -> Unit) {
                         checkmarkColor = Color.White     // Màu dấu check
                     )
                 )
-            }
+            }*/
         }
     }
 }

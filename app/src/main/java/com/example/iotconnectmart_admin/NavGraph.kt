@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.iotconnectmart_admin.customer.CustomerViewModel
 import com.example.iotconnectmart_admin.order.OrderViewModel
 import com.example.iotconnectmart_admin.screen.Dashboard.DashboardScreen
 import com.example.iotconnectmart_admin.screen.ImportProduct.ImportProductDetailScreen
@@ -19,8 +20,10 @@ import com.example.iotconnectmart_admin.screen.ManageAttributes.detailGroupAttri
 import com.example.iotconnectmart_admin.screen.statistical.StatisticsScreen
 
 @Composable
-fun NavGraph(navController: NavHostController,viewModel: OrderViewModel) {
-
+fun NavGraph(navController: NavHostController,
+             viewModel: OrderViewModel,
+             viewModelCus: CustomerViewModel
+) {
 
 
     NavHost(
@@ -28,7 +31,7 @@ fun NavGraph(navController: NavHostController,viewModel: OrderViewModel) {
         startDestination = "HomeScreen"
     ) {
         composable("HomeScreen") {
-            HomeScreen(navController,viewModel)
+            HomeScreen(navController,viewModel,viewModelCus)
         }
         composable("SlideShowScreen") {
             SlideShowScreen(navController)
@@ -64,14 +67,14 @@ fun NavGraph(navController: NavHostController,viewModel: OrderViewModel) {
         }
 
         composable("CustomerScreen") {
-            CustomerScreen(navController)
+            CustomerScreen(navController,viewModelCus)
         }
         composable(
             "customer_detail_screen/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getInt("id")
-            CustomerDetailScreen(id,navController)
+            val id = backStackEntry.arguments?.getString("id")
+            CustomerDetailScreen(id.toString(),navController,viewModelCus)
         }
 
         composable("EmployeeScreen") {
