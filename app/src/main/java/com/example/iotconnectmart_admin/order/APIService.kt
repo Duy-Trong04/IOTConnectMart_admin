@@ -12,8 +12,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 data class orderResponse (
-    val success: Boolean,
-    val message: String
+    val order : List<Order>
 )
 
 data class customerResponse (
@@ -24,7 +23,7 @@ data class customerResponse (
 
 interface APIService {
     @GET("order/read.php")
-    suspend fun getAllOrders(): List<Order>
+    suspend fun getAllOrders(): orderResponse
 
     @GET("order/show.php")
     suspend fun getOrderById(@Query("id") id: Int): Order

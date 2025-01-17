@@ -56,13 +56,9 @@ import com.example.iotconnectmart_admin.customer.CustomerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomerScreen(navController: NavController,viewModel: CustomerViewModel) {
+fun CustomerScreen(navController: NavController) {
 
-    viewModel.getAllCustomers()
-    LaunchedEffect(Unit) {
-        viewModel.getAllCustomers()
-    }
-    var listAllCustomer: List<Customer> = viewModel.listAllCustomer
+
 
     // Lấy context từ Composable
     val context = LocalContext.current
@@ -149,17 +145,6 @@ fun CustomerScreen(navController: NavController,viewModel: CustomerViewModel) {
         )
     }
 */
-    // Lọc danh sách khi có sự thay đổi trong tìm kiếm
-
-
-
-    val filteredCamelCase = listAllCustomer.filter {
-        it.id.contains(searchText.text, ignoreCase = true) ||
-        it.surname.contains(searchText.text, ignoreCase = true) ||
-        it.lastName.contains(searchText.text, ignoreCase = true)
-        it.phone.contains(searchText.text, ignoreCase = true) ||
-        it.email.contains(searchText.text, ignoreCase = true)
-    }
 
     Scaffold(
         content = { paddingValues ->
@@ -213,19 +198,19 @@ fun CustomerScreen(navController: NavController,viewModel: CustomerViewModel) {
                     }
 
                 }
-                // Danh sách Danh mục
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(filteredCamelCase.size) { index ->
-                        val index = filteredCamelCase[index]
-                        CustomerItem(index =index,
-                            onClick = {
-                                navController.navigate("customer_detail_screen/${index.id}")
-                                viewModel.getCustomerById(index.id)
-                            })
-                    }
-                }
+//                // Danh sách Danh mục
+//                LazyColumn(
+//                    modifier = Modifier.fillMaxSize()
+//                ) {
+//                    items(filteredCamelCase.size) { index ->
+//                        val index = filteredCamelCase[index]
+//                        CustomerItem(index =index,
+//                            onClick = {
+//                                navController.navigate("customer_detail_screen/${index.id}")
+//                                viewModel.getCustomerById(index.id)
+//                            })
+//                    }
+//                }
             }
         }
     )

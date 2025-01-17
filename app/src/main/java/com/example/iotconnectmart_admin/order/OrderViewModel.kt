@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.iotconnectmart_admin.Order
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.http.Body
@@ -33,15 +35,11 @@ import retrofit2.http.Body
  */
 class OrderViewModel: ViewModel() {
 
-    var listAllOrder: List<Order> by mutableStateOf(emptyList())
+    private val _listAllOrder = MutableStateFlow<List<Order>>(emptyList())
+    val listAllOrder: StateFlow<List<Order>> = _listAllOrder
 
-    private val _order = MutableLiveData<Order>()
-    //val order: LiveData<Order> get() = _order
-    var order: Order by mutableStateOf(
-        Order(0, "", "", "", "", "", "",
-            "", "", "", "", "", "",
-            "", 1)
-    )
+    var order by mutableStateOf<Order?>(null)
+        private set
 
     var orderUpdateResult by mutableStateOf("")
 
@@ -49,7 +47,10 @@ class OrderViewModel: ViewModel() {
     fun getAllOrder(){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                listAllOrder = RetrofitClient.OrderAPIService.getAllOrders()
+                var response = withContext(Dispatchers.IO){
+                    RetrofitClient.OrderAPIService.getAllOrders()
+                }
+                _listAllOrder.value =response.order ?: emptyList()
                 Log.d("OrderViewModel", "Lấy danh sách đơn hàng thành công")
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -61,9 +62,7 @@ class OrderViewModel: ViewModel() {
     fun getOrderById(id: Int){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                var result = RetrofitClient.OrderAPIService.getOrderById(id)
-                //_order.postValue(result)
-                order= result
+                order =RetrofitClient.OrderAPIService.getOrderById(id)
                 Log.d("OrderViewModel", "Lấy đơn hàng thành công")
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -71,44 +70,44 @@ class OrderViewModel: ViewModel() {
             }
         }
     }
-    fun updateOrder(order: Order){
-        viewModelScope.launch {
-            try {
-                val response = withContext(Dispatchers.IO) {
-                    RetrofitClient.OrderAPIService.updateOrder(order)
-                }
-                orderUpdateResult = if (!response.success) {
-                    "Cập nhật thành công"
-                } else {
-                    "Cập nhật thất bại"
-                }
-                Log.d("orderError", "cập nhật order thanh cong:")
-
-            } catch (e: Exception) {
-                orderUpdateResult = "Lỗi khi cập nhật order: ${e.message}"
-                Log.d("orderError", "Lỗi khi cập nhật order: ${e.message}")
-            }
-        }
-    }
-    fun deleteOrder(id: Int) {
-        viewModelScope.launch {
-            try {
-                val response = RetrofitClient.OrderAPIService.deleteOrder(id)
-                if (response.success) {
-                    val apiResponse = response.message
-                    if (apiResponse == "Order Deleted") {
-                        Log.d("OrderViewModel", "Order đã được xóa")
-                    } else {
-                        Log.e("OrderViewModel", "Lỗi")
-                    }
-                } else {
-                    Log.e("OrderViewModel", "Error}")
-                }
-            } catch (e: Exception) {
-                Log.e("OrderViewModel", "Exception")
-            }
-        }
-    }
+//    fun updateOrder(order: Order){
+//        viewModelScope.launch {
+//            try {
+//                val response = withContext(Dispatchers.IO) {
+//                    RetrofitClient.OrderAPIService.updateOrder(order)
+//                }
+//                orderUpdateResult = if (!response.success) {
+//                    "Cập nhật thành công"
+//                } else {
+//                    "Cập nhật thất bại"
+//                }
+//                Log.d("orderError", "cập nhật order thanh cong:")
+//
+//            } catch (e: Exception) {
+//                orderUpdateResult = "Lỗi khi cập nhật order: ${e.message}"
+//                Log.d("orderError", "Lỗi khi cập nhật order: ${e.message}")
+//            }
+//        }
+//    }
+//    fun deleteOrder(id: Int) {
+//        viewModelScope.launch {
+//            try {
+//                val response = RetrofitClient.OrderAPIService.deleteOrder(id)
+//                if (response.success) {
+//                    val apiResponse = response.message
+//                    if (apiResponse == "Order Deleted") {
+//                        Log.d("OrderViewModel", "Order đã được xóa")
+//                    } else {
+//                        Log.e("OrderViewModel", "Lỗi")
+//                    }
+//                } else {
+//                    Log.e("OrderViewModel", "Error}")
+//                }
+//            } catch (e: Exception) {
+//                Log.e("OrderViewModel", "Exception")
+//            }
+//        }
+//    }
 //
 //    fun updateOrder2(order: Order) {
 //        viewModelScope.launch {

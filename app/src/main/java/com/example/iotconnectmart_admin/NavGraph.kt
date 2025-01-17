@@ -31,7 +31,7 @@ fun NavGraph(navController: NavHostController,
         startDestination = "HomeScreen"
     ) {
         composable("HomeScreen") {
-            HomeScreen(navController,viewModel,viewModelCus)
+            HomeScreen(navController)
         }
         composable("SlideShowScreen") {
             SlideShowScreen(navController)
@@ -67,7 +67,7 @@ fun NavGraph(navController: NavHostController,
         }
 
         composable("CustomerScreen") {
-            CustomerScreen(navController,viewModelCus)
+            CustomerScreen(navController)
         }
         composable(
             "customer_detail_screen/{id}",
@@ -89,14 +89,13 @@ fun NavGraph(navController: NavHostController,
         }
 
         composable("OrderScreen") {
-            OrderScreen(navController, viewModel)
+            OrderScreen(navController)
         }
-        composable(
-            "order_detail_screen/{id}",
+        composable(Screen.OrderDetailScreen.route + "?id={id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getInt("id")
-            OrderDetailScreen(id?:-1,navController,viewModel)
+            val id = backStackEntry.arguments?.getInt("id") ?: 0
+            OrderDetailScreen(navController, id)
         }
 
         //man hinh nhap hang

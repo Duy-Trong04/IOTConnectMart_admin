@@ -61,8 +61,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     navController:NavController,
-    viewModel: OrderViewModel,
-    viewModelCustomer:CustomerViewModel
 ){
     val navdrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope() //xử lý suspending fun (mở và đóng drawer)
@@ -230,10 +228,10 @@ fun HomeScreen(
                         StatisticsScreen(navController = navController)
                     }
                     2 -> {
-                        CustomerScreen(navController = navController,viewModelCustomer)
+                        CustomerScreen(navController = navController)
                     }
                     3 -> {
-                        OrderScreen(navController = navController, viewModel)
+                        OrderScreen(navController = navController)
                     }
                     4 -> {
                         CategoryScreen(navController = navController)

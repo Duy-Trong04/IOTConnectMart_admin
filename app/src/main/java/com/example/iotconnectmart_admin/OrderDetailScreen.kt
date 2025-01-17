@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.iotconnectmart_admin.order.OrderStatus
@@ -58,17 +59,19 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderViewModel) {
+fun OrderDetailScreen(navController: NavController, id: Int) {
 
-//    var order :Order by remember { mutableStateOf(
-//        Order(0,"","","","","","","","","","","","","",1))
-//    }
-    viewModel.getOrderById(Id)
-    LaunchedEffect(Id) {
-        viewModel.getOrderById(Id)
+    var orderViewModel : OrderViewModel = viewModel()
+
+    val order = orderViewModel.order
+
+    if(id != null){
+        LaunchedEffect (id) {
+            orderViewModel.getOrderById(id)
+        }
     }
-    viewModel.getOrderById(Id)
-    var order = viewModel.order
+
+
     //val order by viewModel.order.observeAsState()
    // val orderState = remember { mutableStateOf<Order?>(null) }
 
@@ -84,10 +87,10 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
     // Đặt giá trị padding
     val paddingValue = if (isTablet) 270.dp else 50.dp
     // Kiểm tra id có hợp lệ hay không
-    if (Id == null) {
-        Text("Không tìm thấy đơn hàng")
-        return
-    }
+//    if (id == null) {
+//        Text("Không tìm thấy đơn hàng")
+//        return
+//    }
 
 
    //val dsOrder = viewModel.listAllOrder
@@ -112,33 +115,33 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
     // Lấy số lượng sản phẩm khác nhau
     //var productCount = dsOrderCamelCase.value.size
     // Khai báo các biến state mới cho thông tin đơn hàng
-    var orderID by remember { mutableStateOf(order.id ) }
-    var nameRecipient by remember { mutableStateOf(order.nameRecipient) }
-    var customerPhone by remember { mutableStateOf(order.phone ) }
-    var customerAddress by remember { mutableStateOf(order.address ) }
+    var orderID by remember { mutableStateOf("") }
+    var nameRecipient by remember { mutableStateOf("") }
+    var customerPhone by remember { mutableStateOf("" ) }
+    var customerAddress by remember { mutableStateOf("" ) }
     //var customerEmail by remember { mutableStateOf(order?.) }
-    var emloyeeID by remember { mutableStateOf(order.idEmployee ) }
+    var emloyeeID by remember { mutableStateOf("" ) }
 //   var orderDate by remember { mutableStateOf(order.OrderDate) }
-    var orderNotes by remember { mutableStateOf(order?.note?:"" ) }
+    var orderNotes by remember { mutableStateOf("" ) }
     // Sử dụng remember để giữ trạng thái checkbox khi thay đổi
     //var checkedState = remember { order.state }
 
     var isPlatformDropdownExpanded by remember { mutableStateOf(false) }
-    var selectedPlatformOrder by remember { mutableStateOf(order?.platformOrder?:"") }
-    var selectedPaymentMethod by remember { mutableStateOf(order?.paymentMethod?:"") }
+    var selectedPlatformOrder by remember { mutableStateOf("${order?.platformOrder}") }
+    var selectedPaymentMethod by remember { mutableStateOf("") }
 
     var isStatusDropdownExpanded by remember { mutableStateOf(false) }
-    var selectedStatus by remember { mutableStateOf(OrderStatus.values().first { it.status == order.status}.displayName) }
+    //var selectedStatus by remember { mutableStateOf(OrderStatus.values().first { it.status == order?.status}.displayName) }
     var selectedStatusValue by remember { mutableStateOf(OrderStatus.CHO_VAN_XAC_NHAN.status) }
     val listStatus = OrderStatus.values().map { it.displayName }
 
     // Giá trị mặc định ban đầu từ order
-    var created_at by remember { mutableStateOf(order.created_at) }
-    var updated_at by remember { mutableStateOf(order.updated_at) }
-    var accept_at by remember { mutableStateOf(order.accept_at) }
+    var created_at by remember { mutableStateOf("") }
+    var updated_at by remember { mutableStateOf("") }
+    var accept_at by remember { mutableStateOf("") }
 
     //lay ket qua tu viewmodel
-    val resultUpdate = viewModel.orderUpdateResult
+    //val resultUpdate = viewModel.orderUpdateResult
     var showAlertDialog by remember { mutableStateOf(false) }
 
 
@@ -198,9 +201,9 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         Text(text = "ID: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(90.dp))
                         BasicTextField(
-                            value = orderID.toString(),
+                            value = order?.id.toString(),
                             // Kiểm tra và chuyển đổi giá trị mới thành Int
-                            onValueChange = { newValue -> orderID = newValue.toIntOrNull() ?: orderID },
+                            onValueChange = {  orderID = it },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             readOnly = true,
                             modifier = Modifier
@@ -240,7 +243,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         Text(text = "Họ tên: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(55.dp))
                         BasicTextField(
-                            value = nameRecipient,
+                            value = nameRecipient.toString(),
                             onValueChange = { newValue -> nameRecipient = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             modifier = Modifier
@@ -260,7 +263,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         Text(text = "SDT: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(75.dp))
                         BasicTextField(
-                            value = customerPhone,
+                            value =order?.phone.toString(),
                             onValueChange = { newValue -> customerPhone = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             modifier = Modifier
@@ -283,7 +286,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         Text(text = "Địa chỉ: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(55.dp))
                         BasicTextField(
-                            value = customerAddress,
+                            value = order?.address.toString(),
                             onValueChange = { newValue -> customerAddress = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             modifier = Modifier
@@ -303,7 +306,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         Text(text = "Mã người lập: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(5.dp))
                         BasicTextField(
-                            value = emloyeeID,
+                            value = emloyeeID.toString(),
                             onValueChange = { newValue -> emloyeeID = newValue},
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             readOnly = true,
@@ -359,7 +362,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         Text(text = "Ngày lập:", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(25.dp))
                         BasicTextField(
-                            value = created_at,
+                            value = order?.created_at.toString(),
                             onValueChange = { newValue -> created_at = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             readOnly = true,
@@ -380,7 +383,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         Text(text = "Ngày cập nhật:", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(15.dp))
                         BasicTextField(
-                            value = updated_at,
+                            value = order?.updated_at.toString(),
                             onValueChange = { newValue -> updated_at = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             readOnly = true,
@@ -401,7 +404,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         Text(text = "Ngày chấp nhận:", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(13.dp))
                         BasicTextField(
-                            value = accept_at,
+                            value = order?.accept_at.toString(),
                             onValueChange = { newValue -> accept_at = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             readOnly = true,
@@ -422,7 +425,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         Text(text = "Ghi chú: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(52.dp))
                         BasicTextField(
-                            value = orderNotes,
+                            value = order?.note.toString(),
                             onValueChange = { newValue -> orderNotes = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
                             modifier = Modifier
@@ -556,7 +559,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         OutlinedButton(
                             onClick = { isStatusDropdownExpanded = !isStatusDropdownExpanded }
                         ) {
-                            Text(text = selectedStatus)
+                            Text(text = "selectedStatus")
                         }
 
                         // Điều chỉnh để DropdownMenu có thể đè lên LazyColumn
@@ -573,7 +576,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                                     text = { Text(method) },
                                     onClick = {
                                        var selectedOrderStatus= OrderStatus.values().first{ it.displayName == method }
-                                        selectedStatus = selectedOrderStatus.displayName// Cập nhật phương thức thanh toán được chọn
+                                        //selectedStatus = selectedOrderStatus.displayName// Cập nhật phương thức thanh toán được chọn
                                         //viewModel.order.value?.paymentMethod = method // Cập nhật giá trị trong order
                                        selectedStatusValue= selectedOrderStatus.status
                                         isStatusDropdownExpanded = false
@@ -633,35 +636,35 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                     Text(text = "Tổng tiền: ", fontWeight = FontWeight.Bold)
                     //val formatter = DecimalFormat("#,###")
 
-                    Text(text = order.totalAmount + " VND", fontWeight = FontWeight.Bold,color = Color.Red)
+                    Text(text = order?.totalAmount.toString() + " VND", fontWeight = FontWeight.Bold,color = Color.Red)
                     Spacer(modifier = Modifier.height(30.dp))
                     // Nút Lưu
                     Button(
                         onClick = {/* Handle update slideshow*/
 
-                            var formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                            val currentDate = Date()
-                            updated_at= formatter.format(currentDate)
-
-                            var updateOrder = Order(
-                                orderID,
-                                order.idCustomer,
-                                order.totalAmount,
-                                selectedPaymentMethod,
-                                customerAddress,
-                                order.accountNumber,
-                                customerPhone,
-                                nameRecipient,
-                                orderNotes ,
-                                selectedPlatformOrder,
-                                created_at,
-                                updated_at,
-                                accept_at,
-                                order.idEmployee,
-                                selectedStatusValue,)
-                            viewModel.updateOrder(updateOrder)
-                            viewModel.getAllOrder()
-                            showAlertDialog = true
+//                            var formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+//                            val currentDate = Date()
+//                            updated_at= formatter.format(currentDate)
+//
+//                            var updateOrder = Order(
+//                                orderID,
+//                                order.idCustomer,
+//                                order.totalAmount,
+//                                selectedPaymentMethod,
+//                                customerAddress,
+//                                order.accountNumber,
+//                                customerPhone,
+//                                nameRecipient,
+//                                orderNotes ,
+//                                selectedPlatformOrder,
+//                                created_at,
+//                                updated_at,
+//                                accept_at,
+//                                order.idEmployee,
+//                                selectedStatusValue,)
+//                            viewModel.updateOrder(updateOrder)
+//                            viewModel.getAllOrder()
+//                            showAlertDialog = true
                         },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
@@ -682,7 +685,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                                         navController.navigate(Screen.HomeScreen.route)
                                     }) { Text("OK") } },
                             title = { Text("Thông báo") },
-                            text = { Text(resultUpdate) }
+                            //text = { Text(resultUpdate) }
                         )
                     }
 

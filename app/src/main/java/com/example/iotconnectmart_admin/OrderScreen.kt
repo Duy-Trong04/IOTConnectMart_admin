@@ -63,13 +63,14 @@ import com.example.iotconnectmart_admin.order.statusOptions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderScreen(navController: NavController,viewModel: OrderViewModel) {
+fun OrderScreen(navController: NavController) {
 
-    viewModel.getAllOrder()
-    LaunchedEffect(Unit) {
-        viewModel.getAllOrder()
+    var orderViewModel:OrderViewModel = viewModel()
+
+    val listAllOrder by orderViewModel.listAllOrder.collectAsState()
+    LaunchedEffect(Unit){
+        orderViewModel.getAllOrder()
     }
-    var listAllOrder: List<Order> = viewModel.listAllOrder
 
     // Lấy context từ Composable
     val context = LocalContext.current
@@ -80,84 +81,6 @@ fun OrderScreen(navController: NavController,viewModel: OrderViewModel) {
 
     // Tạo trạng thái cho TextField
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
-    /*
-    val dsOrder = remember {
-        mutableStateOf(
-            listOf(
-                Order(
-                    id = 1,
-                    orderId = "ORD001",
-                    CustomerName = "Nguyễn Văn A",
-                    CustomerPhone = 123456789,
-                    CustomerAddress = "123 Đường ABC, Quận 1, TP.HCM",
-                    CustomerEmail = "customerA@gmail.com",
-                    EmployeeName = "Trần Thị B",
-                    OrderDate = "2024-12-20",
-                    Notes = "Giao hàng vào buổi sáng.",
-                    state = "Đang giao"
-                ),
-                Order(
-                    id = 2,
-                    orderId = "ORD002",
-                    CustomerName = "Lê Thị C",
-                    CustomerPhone = 987654321,
-                    CustomerAddress = "456 Đường DEF, Quận 2, TP.HCM",
-                    CustomerEmail = "customerC@gmail.com",
-                    EmployeeName = "Nguyễn Văn D",
-                    OrderDate = "2024-12-18",
-                    Notes = "Liên hệ trước khi giao.",
-                    state = "Chưa giao"
-                ),
-                Order(
-                    id = 3,
-                    orderId = "ORD003",
-                    CustomerName = "Phạm Văn E",
-                    CustomerPhone = 112233445,
-                    CustomerAddress = "789 Đường GHI, Quận 3, TP.HCM",
-                    CustomerEmail = "customerE@gmail.com",
-                    EmployeeName = "Trần Văn F",
-                    OrderDate = "2024-12-19",
-                    Notes = "Khách hàng muốn kiểm tra hàng trước khi nhận.",
-                    state = "Đang giao"
-                ),
-                Order(
-                    id = 4,
-                    orderId = "ORD004",
-                    CustomerName = "Đặng Thị G",
-                    CustomerPhone = 556677889,
-                    CustomerAddress = "123 Đường JKL, Quận 4, TP.HCM",
-                    CustomerEmail = "customerG@gmail.com",
-                    EmployeeName = "Lê Thị H",
-                    OrderDate = "2024-12-17",
-                    Notes = "Khách hàng yêu cầu xuất hóa đơn.",
-                    state = "Chưa giao"
-                ),
-                Order(
-                    id = 5,
-                    orderId = "ORD005",
-                    CustomerName = "Võ Văn I",
-                    CustomerPhone = 223344556,
-                    CustomerAddress = "456 Đường MNO, Quận 5, TP.HCM",
-                    CustomerEmail = "customerI@gmail.com",
-                    EmployeeName = "Phạm Thị J",
-                    OrderDate = "2024-12-16",
-                    Notes = "Giao hàng sau 17h.",
-                    state = "Đang giao"
-                )
-            )
-        )
-    }
-
-    // Lọc danh sách khi có sự thay đổi trong tìm kiếm
-    val filteredCamelCase = dsOrder.value.filter {
-        it.orderId.contains(searchText.text, ignoreCase = true) ||
-                it.CustomerName.contains(searchText.text, ignoreCase = true) ||
-                it.CustomerAddress.contains(searchText.text, ignoreCase = true)
-        it.state.contains(searchText.text, ignoreCase = true)
-    }
-*/
-    // Lọc danh sách khi có sự thay đổi trong tìm kiếm
-    //val filteredCamelCase = listAllOrder
 
     var isDropdownExpanded by remember { mutableStateOf(false) }
     var selectedStatus by remember { mutableStateOf("Tất cả") }
@@ -203,7 +126,7 @@ fun OrderScreen(navController: NavController,viewModel: OrderViewModel) {
                                 contentDescription = "search"
                             )
                         },
-                        placeholder = { Text(text = "Tìm kiếm") },
+                        placeholder = { Text(text = "Tìm kiếm ${listAllOrder.size}") },
                         modifier = Modifier.fillMaxWidth()
                             .border(1.dp, color = Color.Gray, RoundedCornerShape(10.dp)),
                         colors = TextFieldDefaults.colors(
@@ -261,74 +184,65 @@ fun OrderScreen(navController: NavController,viewModel: OrderViewModel) {
 
                     }
                     // Danh sách Đơn hàng
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(filteredOrder.size) { index ->
-                            val index = filteredOrder[index]
-                            OrderItem(index =index,
-                                onClick = {
-                                    viewModel.getOrderById(index.id)
-                                    navController.navigate("Order_detail_screen/${index.id}")
-                                    viewModel.getOrderById(index.id)
-                                })
-                        }
-                    }
-//                LazyColumn(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                ) {
-//                    items(listAllOrder) { //order ->
-//                        CardDeviceFeatured(
-//                            order = it)
+//                    LazyColumn(
+//                        modifier = Modifier.fillMaxSize()
+//                    ) {
+//                        items(listAllOrder) {
+//                            OrderItem(index =index,
+//                                onClick = {
+//                                    viewModel.getOrderById(index.id)
+//                                    navController.navigate("Order_detail_screen/${index.id}")
+//                                    viewModel.getOrderById(index.id)
+//                                })
+//                        }
 //                    }
-//                }
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    items(listAllOrder) { //order ->
+                        OrderItem(
+                            order = it,
+                            navController
+                        )
+                    }
+                }
                 }
             }
         )
     }
-
     @Composable
-    fun CardDeviceFeatured(order: Order) {
-        Card(
-        ) {
-            Text(text = order.idCustomer)
-        }
-    }
-
-
-    @Composable
-    fun OrderItem(index: Order, onClick: () -> Unit) {
+    fun OrderItem(order: Order, navController: NavController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
                 .border(1.dp, Color.Gray)
                 .padding(16.dp)
-                .clickable(onClick = onClick)
+                .clickable(onClick = {navController.navigate(Screen.OrderDetailScreen.route + "?id=${order.id}")} )
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 // Id
                 Text(
-                    text = "ID: ${index.id}",
+                    text = "ID: ${order.id}",
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyMedium
                 )
 
                 // Tên Khách hàng
                 Text(
-                    text = "Tên KH: ${index.nameRecipient}",
+                    text = "Tên KH: ${order.nameRecipient}",
                     style = MaterialTheme.typography.bodySmall
                 )
 
                 // SDT
                 Text(
-                    text = "SDT: ${index.phone}",
+                    text = "SDT: ${order.phone}",
                     style = MaterialTheme.typography.bodySmall,
                 )
                 // Địa chỉ
                 Text(
-                    text = "Địa chỉ: ${index.address}",
+                    text = "Địa chỉ: ${order.address}",
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 1,// Số dòng tối đa hiển thị
                     overflow = TextOverflow.Ellipsis // Hiển thị ... khi dài
