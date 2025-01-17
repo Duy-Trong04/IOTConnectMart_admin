@@ -41,6 +41,8 @@ android {
 
 dependencies {
 
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0" )
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
     implementation ("androidx.compose.runtime:runtime-livedata:1.0.5")
 
     implementation ("com.google.accompanist:accompanist-pager:0.28.0")

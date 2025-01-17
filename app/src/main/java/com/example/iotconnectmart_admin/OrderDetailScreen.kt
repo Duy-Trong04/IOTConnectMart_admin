@@ -1,5 +1,6 @@
 package com.example.iotconnectmart_admin
 
+import android.icu.text.SimpleDateFormat
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,8 @@ import coil.compose.rememberImagePainter
 import com.example.iotconnectmart_admin.order.OrderStatus
 import com.example.iotconnectmart_admin.order.OrderViewModel
 import java.text.DecimalFormat
+import java.util.Date
+import java.util.Locale
 
 /** Giao diện màn hình Chi tiết Đơn hàng (OrderDetailScreen)
  * -------------------------------------------
@@ -64,6 +67,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
     LaunchedEffect(Id) {
         viewModel.getOrderById(Id)
     }
+    viewModel.getOrderById(Id)
     var order = viewModel.order
     //val order by viewModel.order.observeAsState()
    // val orderState = remember { mutableStateOf<Order?>(null) }
@@ -198,6 +202,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                             // Kiểm tra và chuyển đổi giá trị mới thành Int
                             onValueChange = { newValue -> orderID = newValue.toIntOrNull() ?: orderID },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
+                            readOnly = true,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
@@ -295,12 +300,13 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Nhân viên lập: ", fontWeight = FontWeight.Bold)
+                        Text(text = "Mã người lập: ", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(5.dp))
                         BasicTextField(
                             value = emloyeeID,
                             onValueChange = { newValue -> emloyeeID = newValue},
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
+                            readOnly = true,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
@@ -350,12 +356,13 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Ngày lập: ", fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.width(45.dp))
+                        Text(text = "Ngày lập:", fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.width(25.dp))
                         BasicTextField(
                             value = created_at,
                             onValueChange = { newValue -> created_at = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
+                            readOnly = true,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
@@ -370,12 +377,13 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Ngày cập nhật: ", fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.width(45.dp))
+                        Text(text = "Ngày cập nhật:", fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.width(15.dp))
                         BasicTextField(
                             value = updated_at,
                             onValueChange = { newValue -> updated_at = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
+                            readOnly = true,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
@@ -390,12 +398,13 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Ngày chấp nhận: ", fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.width(45.dp))
+                        Text(text = "Ngày chấp nhận:", fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.width(13.dp))
                         BasicTextField(
                             value = accept_at,
                             onValueChange = { newValue -> accept_at = newValue },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
+                            readOnly = true,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
@@ -612,21 +621,28 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
 */
                     Spacer(modifier = Modifier.height(8.dp))
                     // Tổng sản phẩm
-                    Text(text = "Tổng sản phẩm: ", fontWeight = FontWeight.Bold)
-                    Text(text = "productCount")
-                    Spacer(modifier = Modifier.height(8.dp))
-                    // Tổng số lượng
-                    Text(text = "Tổng số lượng: ", fontWeight = FontWeight.Bold)
-                    Text(text = "totalQuantity")
-
-                    Spacer(modifier = Modifier.height(8.dp))
+//                    Text(text = "Tổng sản phẩm: ", fontWeight = FontWeight.Bold)
+//                    Text(text = "productCount")
+//                    Spacer(modifier = Modifier.height(8.dp))
+//                    // Tổng số lượng
+//                    Text(text = "Tổng số lượng: ", fontWeight = FontWeight.Bold)
+//                    Text(text = "totalQuantity")
+//
+//                    Spacer(modifier = Modifier.height(8.dp))
                     //Tổng giá
                     Text(text = "Tổng tiền: ", fontWeight = FontWeight.Bold)
-                    Text(text = order.totalAmount, fontWeight = FontWeight.Bold,color = Color.Red)
+                    //val formatter = DecimalFormat("#,###")
+
+                    Text(text = order.totalAmount + " VND", fontWeight = FontWeight.Bold,color = Color.Red)
                     Spacer(modifier = Modifier.height(30.dp))
                     // Nút Lưu
                     Button(
                         onClick = {/* Handle update slideshow*/
+
+                            var formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                            val currentDate = Date()
+                            updated_at= formatter.format(currentDate)
+
                             var updateOrder = Order(
                                 orderID,
                                 order.idCustomer,
@@ -666,7 +682,7 @@ fun OrderDetailScreen(Id: Int, navController: NavController,viewModel: OrderView
                                         navController.navigate(Screen.HomeScreen.route)
                                     }) { Text("OK") } },
                             title = { Text("Thông báo") },
-                            text = { Text(resultUpdate+selectedStatusValue.toString()) }
+                            text = { Text(resultUpdate) }
                         )
                     }
 

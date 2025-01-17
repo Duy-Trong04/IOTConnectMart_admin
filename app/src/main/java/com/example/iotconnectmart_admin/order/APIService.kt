@@ -23,18 +23,18 @@ data class customerResponse (
 
 
 interface APIService {
-    @GET("order/readOrder.php")
+    @GET("order/read.php")
     suspend fun getAllOrders(): List<Order>
 
-    @GET("order/showOrder.php")
+    @GET("order/show.php")
     suspend fun getOrderById(@Query("id") id: Int): Order
 
-    @PUT("order/updateOrder.php")
+    @PUT("order/update.php")
     suspend fun updateOrder(
         @Body order: Order
     ): orderResponse
 
-    @DELETE("order/deleteOrder.php")
+    @DELETE("order/delete.php")
     suspend fun deleteOrder(
         @Body idOrder: Int
     ): orderResponse
